@@ -75,6 +75,14 @@ public class StackV3Action {
                 .deleteInWorkspace(workspaceId, stackEntity.getName(), forced, false);
     }
 
+    public static void delete(IntegrationTestContext integrationTestContext, StackEntity entity, CloudbreakClient cloudbreakClient, Boolean forced) {
+        StackEntity stackEntity = entity;
+        Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
+        Log.log(" delete: " + stackEntity.getName());
+        cloudbreakClient.getCloudbreakClient().stackV3Endpoint()
+                .deleteInWorkspace(workspaceId, stackEntity.getName(), forced, false);
+    }
+
     public static void deleteWithKerberos(IntegrationTestContext integrationTestContext, Entity entity) {
         StackEntity stackEntity = (StackEntity) entity;
         CloudbreakClient client;

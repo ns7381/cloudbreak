@@ -109,7 +109,7 @@ public class MockCloudProvider extends CloudProviderHelper {
     }
 
     @Override
-    StackAuthenticationRequest stackauth() {
+    public StackAuthenticationRequest stackauth() {
         StackAuthenticationRequest stackauth = new StackAuthenticationRequest();
 
         stackauth.setPublicKey("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0Rfl2G2vDs6yc19RxCqReunFgpYj+ucyLob"

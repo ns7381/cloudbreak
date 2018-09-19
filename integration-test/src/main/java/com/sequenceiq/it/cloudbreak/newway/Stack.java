@@ -3,6 +3,7 @@ package com.sequenceiq.it.cloudbreak.newway;
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndCheckClusterStatus;
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndCheckStackStatus;
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndExpectClusterFailure;
+import static java.util.Collections.emptyMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -29,6 +31,7 @@ import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupResponse;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceMetaDataJson;
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.SshService;
+import com.sequenceiq.it.cloudbreak.newway.cloud.MockCloudProvider;
 import com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackPostV3Strategy;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
@@ -50,6 +53,19 @@ public class Stack extends StackEntity {
 
     public static Stack request() {
         return new Stack();
+    }
+
+    public static StackEntity valid() {
+        MockCloudProvider provider = new MockCloudProvider(new TestParameter());
+        return request()
+                .withInputs(emptyMap())
+                .withName("name")
+                .withRegion(provider.region())
+                .withAvailabilityZone(provider.availabilityZone())
+                .withInstanceGroups(provider.instanceGroups())
+                .withNetwork(provider.newNetwork())
+                .withCredentialName(provider.getCredentialName())
+                .withStackAuthentication(provider.stackauth());
     }
 
     public static Stack isCreated() {
@@ -179,6 +195,24 @@ public class Stack extends StackEntity {
             Assert.assertNotNull(stackResponse.getName());
             waitAndCheckStackStatus(client.getCloudbreakClient(), workspaceId, stackName, "DELETE_COMPLETED");
         });
+    }
+
+    public static Map<String, String> waitAndCheckClusterAndStackAvailabilityStatus(StackEntity stack, CloudbreakClient cloudbreakClient) {
+        StackResponse stackResponse = stack.getResponse();
+        String stackName = stackResponse.getName();
+        Long workspaceId = stackResponse.getWorkspace().getId();
+        Assert.assertNotNull(stackResponse.getName());
+        Map<String, String> statuses = waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE");
+        statuses.putAll(waitAndCheckClusterStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE"));
+        return statuses;
+    }
+
+    public static void waitAndCheckClusterDeletedA(StackEntity stack, IntegrationTestContext t, CloudbreakClient cloudbreakClient) {
+        StackResponse stackResponse = stack.getResponse();
+        String stackName = stackResponse.getName();
+        Long workspaceId = stackResponse.getWorkspace().getId();
+        Assert.assertNotNull(stackResponse.getName());
+        waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "DELETE_COMPLETED");
     }
 
     public static Assertion<?> checkClusterHasAmbariRunning(String ambariPort, String ambariUser, String ambariPassword) {

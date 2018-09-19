@@ -1,5 +1,8 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
+import static com.sequenceiq.it.cloudbreak.newway.cloud.CloudProvider.CREDENTIAL_DEFAULT_DESCRIPTION;
+import static com.sequenceiq.it.cloudbreak.newway.cloud.MockCloudProvider.MOCK_CAPITAL;
+
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -28,6 +31,13 @@ public class Credential extends CredentialEntity {
         Credential credential = new Credential();
         credential.setCreationStrategy(CredentialV3Action::createInGiven);
         return credential;
+    }
+
+    public static CredentialEntity valid() {
+        return request()
+                .withName("autotesting-mock-cred")
+                .withDescription(CREDENTIAL_DEFAULT_DESCRIPTION)
+                .withCloudPlatform(MOCK_CAPITAL);
     }
 
     public static Credential isDeleted(Credential credential) {

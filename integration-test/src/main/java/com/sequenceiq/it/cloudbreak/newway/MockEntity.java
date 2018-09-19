@@ -43,7 +43,7 @@ public class MockEntity extends Entity {
         return callStack;
     }
 
-    protected void initSparkService() {
+    public void initSparkService() {
         if (sparkService == null) {
             sparkService = Service.ignite();
         }
@@ -90,7 +90,7 @@ public class MockEntity extends Entity {
         return port;
     }
 
-    protected Service getSparkService() {
+    public Service getSparkService() {
         return sparkService;
     }
 

@@ -1,7 +1,5 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -36,10 +34,10 @@ public class CloudbreakMockClusterTest extends CloudbreakTest {
 
     @BeforeSuite()
     public void checkNecessaryArguments() {
-        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_CLOUDBREAK_SERVER"), WARNING_TEXT);
-        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_SERVER"), WARNING_TEXT);
-        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_USER"), WARNING_TEXT);
-        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_PASSWORD"), WARNING_TEXT);
+//        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_CLOUDBREAK_SERVER"), WARNING_TEXT);
+//        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_SERVER"), WARNING_TEXT);
+//        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_USER"), WARNING_TEXT);
+//        Objects.requireNonNull(getTestParameter().get("INTEGRATIONTEST_UAA_PASSWORD"), WARNING_TEXT);
     }
 
     @BeforeSuite

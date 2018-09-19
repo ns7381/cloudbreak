@@ -20,6 +20,11 @@ public class ImageCatalog extends ImageCatalogEntity {
         return new ImageCatalog();
     }
 
+    public static ImageCatalogEntity valid() {
+        return request()
+                .withName("mock-image-catalog");
+    }
+
     public static ImageCatalog isCreated() {
         ImageCatalog imageCatalog = new ImageCatalog();
         imageCatalog.setCreationStrategy(ImageCatalogV3Action::createInGiven);

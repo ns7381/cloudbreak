@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.testng.TestNG;
 
+import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.SuiteContext;
+import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 
 @Configuration
 @ComponentScan("com.sequenceiq.it")
@@ -27,5 +29,17 @@ public class IntegrationTestConfiguration {
     @Bean
     public TestNG testNG() {
         return new TestNG();
+    }
+
+    @Bean
+    public IntegrationTestContext integrationTestContext() {
+        return new IntegrationTestContext();
+    }
+
+    @Bean
+    public CloudbreakClient cloudbreakClient(IntegrationTestContext integrationTestContext) throws Exception {
+        CloudbreakClient cloudbreakClient = com.sequenceiq.it.cloudbreak.newway.CloudbreakClient.isCreated();
+        cloudbreakClient.create(integrationTestContext, cloudbreakClient);
+        return cloudbreakClient;
     }
 }

@@ -97,6 +97,13 @@ public class ImageCatalogV3Action {
 
     }
 
+    public static void delete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient cloudbreakClient) {
+        ImageCatalogEntity recipeEntity = (ImageCatalogEntity) entity;
+        Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
+        cloudbreakClient.getCloudbreakClient().imageCatalogV3Endpoint()
+                .deleteInWorkspace(workspaceId, recipeEntity.getName());
+    }
+
     public static void delete(IntegrationTestContext integrationTestContext, Entity entity) {
         ImageCatalogEntity recipeEntity = (ImageCatalogEntity) entity;
         CloudbreakClient client;
@@ -107,6 +114,14 @@ public class ImageCatalogV3Action {
                 .deleteInWorkspace(workspaceId, recipeEntity.getName());
     }
 
+    public static void putSetDefaultByName(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient cloudbreakClient) throws Exception {
+        ImageCatalogEntity imageCatalogEntity = (ImageCatalogEntity) entity;
+        Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
+        imageCatalogEntity.setResponse(
+                cloudbreakClient.getCloudbreakClient()
+                        .imageCatalogV3Endpoint().putSetDefaultByNameInWorkspace(workspaceId, imageCatalogEntity.getName()));
+        logJSON("Imagecatalog get response: ", imageCatalogEntity.getResponse());
+    }
     public static void putSetDefaultByName(IntegrationTestContext integrationTestContext, Entity entity) throws Exception {
         ImageCatalogEntity imageCatalogEntity = (ImageCatalogEntity) entity;
         CloudbreakClient client;

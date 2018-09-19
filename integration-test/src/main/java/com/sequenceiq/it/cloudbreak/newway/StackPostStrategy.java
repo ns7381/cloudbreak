@@ -17,8 +17,9 @@ import com.sequenceiq.cloudbreak.api.model.v2.AmbariV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.ClusterV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.NetworkV2Request;
 import com.sequenceiq.it.IntegrationTestContext;
+import com.sequenceiq.it.cloudbreak.newway.ger.StrategyV2;
 
-public class StackPostStrategy implements Strategy {
+public class StackPostStrategy implements StrategyV2 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StackPostStrategy.class);
 
@@ -27,10 +28,11 @@ public class StackPostStrategy implements Strategy {
     private static final String NETWORK_ID_KEY = "networkId";
 
     @Override
-    public void doAction(IntegrationTestContext integrationTestContext, Entity entity) throws Exception {
+    public void doAction(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient client) throws Exception {
         StackEntity stackEntity = (StackEntity) entity;
-        CloudbreakClient client = getTestContextCloudbreakClient().apply(integrationTestContext);
-
+        if (client == null) {
+            client = getTestContextCloudbreakClient().apply(integrationTestContext);
+        }
 
         Credential credential = Credential.getTestContextCredential().apply(integrationTestContext);
 
@@ -136,5 +138,10 @@ public class StackPostStrategy implements Strategy {
                         .postPrivate(stackEntity.getRequest()));
         logJSON(" Stack post response:\n", stackEntity.getResponse());
         log(" ID:\n" + stackEntity.getResponse().getId());
+    }
+
+    @Override
+    public void doAction(IntegrationTestContext integrationTestContext, Entity entity) throws Exception {
+        doAction(integrationTestContext, entity, null);
     }
 }

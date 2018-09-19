@@ -144,7 +144,7 @@ public abstract class CloudProviderHelper extends CloudProvider {
                 .withStackAuthentication(stackauth());
     }
 
-    abstract StackAuthenticationRequest stackauth();
+    public abstract StackAuthenticationRequest stackauth();
 
     public abstract NetworkV2Request newNetwork();
 

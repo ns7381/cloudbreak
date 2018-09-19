@@ -55,6 +55,16 @@ public class CredentialV3Action {
                 client.getCloudbreakClient().credentialV3Endpoint().listByWorkspace(workspaceId));
     }
 
+    public static void delete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient client) {
+        CredentialEntity credentialEntity = (CredentialEntity) entity;
+        Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
+        Log.log(" delete "
+                .concat(credentialEntity.getName())
+                .concat(" private credential. "));
+        client.getCloudbreakClient().credentialV3Endpoint()
+                .deleteInWorkspace(workspaceId, credentialEntity.getName());
+    }
+
     public static void delete(IntegrationTestContext integrationTestContext, Entity entity) {
         CredentialEntity credentialEntity = (CredentialEntity) entity;
         CloudbreakClient client;
