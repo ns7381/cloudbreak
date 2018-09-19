@@ -11,11 +11,14 @@ import com.sequenceiq.cloudbreak.cloud.model.CloudVmMetaDataStatus;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceAuthentication;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceStatus;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceTemplate;
+import com.sequenceiq.it.cloudbreak.newway.mock.model.AmbariMock;
+import com.sequenceiq.it.cloudbreak.newway.mock.model.SPIMock;
+import com.sequenceiq.it.cloudbreak.newway.mock.model.SaltMock;
 import com.sequenceiq.it.util.ServerAddressGenerator;
 
 import spark.Service;
 
-public class Model extends MockModel {
+public class DefaultModel extends MockModel {
     private boolean clusterCreated;
 
     private int sshPort = 2020;
@@ -30,6 +33,7 @@ public class Model extends MockModel {
 
     private SaltMock saltMock;
 
+    @Override
     public void startModel(Service sparkService, String mockServerAddress) {
         setMockServerAddress(mockServerAddress);
         initInstanceMap(20);

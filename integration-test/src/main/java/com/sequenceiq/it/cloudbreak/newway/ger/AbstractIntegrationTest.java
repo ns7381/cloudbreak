@@ -17,7 +17,7 @@ import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.Credential;
 import com.sequenceiq.it.cloudbreak.newway.GherkinTest;
 import com.sequenceiq.it.cloudbreak.newway.ImageCatalog;
-import com.sequenceiq.it.cloudbreak.newway.mock.Model;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 import com.sequenceiq.it.cloudbreak.newway.v3.ImageCatalogV3Action;
 
@@ -35,7 +35,7 @@ public abstract class AbstractIntegrationTest extends GherkinTest {
     public void setup() throws Exception {
         sparkServer = applicationContext.getBean(SparkServer.class, "localhost", 9444);
         sparkServer.initSparkService();
-        Model model = new Model();
+        DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
         String imageCatalogAddress = sparkServer.startImageCatalog(9444);
         given(ImageCatalog.valid().withUrl(imageCatalogAddress), new ImageCatalogCreateStrategy(), "an image catalog");

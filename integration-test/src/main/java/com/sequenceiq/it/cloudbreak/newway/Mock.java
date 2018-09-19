@@ -21,13 +21,13 @@ import org.springframework.core.io.ClassPathResource;
 import com.google.gson.Gson;
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.mock.ImageCatalogServiceMock;
 import com.sequenceiq.it.cloudbreak.newway.mock.MockModel;
-import com.sequenceiq.it.cloudbreak.newway.mock.Model;
 import com.sequenceiq.it.spark.ITResponse;
 import com.sequenceiq.it.verification.Verification;
 
-public class Mock extends MockEntity {
+public class Mock extends SparkMockEntity {
     public static final int DEFAULT_PORT = 9444;
 
     public static final String MOCK_SERVER = "MOCK_SERVER";
@@ -63,7 +63,7 @@ public class Mock extends MockEntity {
     }
 
     public static Mock isCreated() {
-        return isCreated(new Model());
+        return isCreated(new DefaultModel());
     }
 
     public static Mock isCreated(MockModel model) {

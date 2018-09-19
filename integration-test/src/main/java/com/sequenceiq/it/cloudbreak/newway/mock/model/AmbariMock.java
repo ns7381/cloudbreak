@@ -1,4 +1,4 @@
-package com.sequenceiq.it.cloudbreak.newway.mock;
+package com.sequenceiq.it.cloudbreak.newway.mock.model;
 
 import static com.sequenceiq.it.cloudbreak.newway.Mock.gson;
 import static com.sequenceiq.it.cloudbreak.newway.Mock.responseFromJsonFile;
@@ -9,6 +9,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sequenceiq.cloudbreak.cloud.model.CloudVmMetaDataStatus;
+import com.sequenceiq.it.cloudbreak.newway.mock.AbstractModelMock;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.spark.ITResponse;
 import com.sequenceiq.it.spark.ambari.AmbariCheckResponse;
 import com.sequenceiq.it.spark.ambari.AmbariClusterRequestsResponse;
@@ -70,37 +72,37 @@ public class AmbariMock extends AbstractModelMock {
 
     public static final String VIEWS = "/views/*";
 
-    public AmbariMock(Service sparkService, Model model) {
-        super(sparkService, model);
+    public AmbariMock(Service sparkService, DefaultModel defaultModel) {
+        super(sparkService, defaultModel);
     }
 
     public void addAmbariMappingsOld() {
         getAmbariClusterRequest(getSparkService());
-        getAmbariClusters(getModel().getClusterName(), getModel().getInstanceMap(), getSparkService());
+        getAmbariClusters(getDefaultModel().getClusterName(), getDefaultModel().getInstanceMap(), getSparkService());
         postAmbariClusterRequest(getSparkService());
         getAmbariCheck(getSparkService());
         postAmbariUsers(getSparkService());
         postAmbariCluster(getSparkService());
         getAmbariBlueprint(getSparkService());
-        getAmbariClusterHosts(getModel().getInstanceMap(), getSparkService(), "STARTED");
+        getAmbariClusterHosts(getDefaultModel().getInstanceMap(), getSparkService(), "STARTED");
         postAmbariInstances(getSparkService());
         postAmbariClusters(getSparkService());
         getAmbariComponents(getSparkService());
-        getAmbariHosts(getModel().getInstanceMap(), getSparkService());
+        getAmbariHosts(getDefaultModel().getInstanceMap(), getSparkService());
         postAmbariBlueprints(getSparkService());
         putAmbariUsersAdmin(getSparkService());
-        getAmbariClusterHosts(getModel().getInstanceMap(), getSparkService());
+        getAmbariClusterHosts(getDefaultModel().getInstanceMap(), getSparkService());
         putAmbariHdpVersion(getSparkService());
         getAmabriVersionDefinitions(getSparkService());
         postAmbariVersionDefinitions(getSparkService());
     }
 
     public void addAmbariMappings() {
-        Map<String, CloudVmMetaDataStatus> instanceMap = getModel().getInstanceMap();
+        Map<String, CloudVmMetaDataStatus> instanceMap = getDefaultModel().getInstanceMap();
         Service sparkService = getSparkService();
 
         getAmbariClusterRequest(sparkService);
-        getAmbariClusters(getModel().getClusterName(), instanceMap, sparkService);
+        getAmbariClusters(getDefaultModel().getClusterName(), instanceMap, sparkService);
         postAmbariClusterRequest(sparkService);
         getAmbariCheck(sparkService);
         postAmbariUsers(sparkService);
@@ -118,7 +120,7 @@ public class AmbariMock extends AbstractModelMock {
         getAmabriVersionDefinitions(sparkService);
         postAmbariVersionDefinitions(sparkService);
 
-        getAmbariCluster(getModel().getClusterName(), instanceMap, sparkService);
+        getAmbariCluster(getDefaultModel().getClusterName(), instanceMap, sparkService);
         getAmbariClusterHosts(instanceMap, sparkService, "INSTALLED");
         putAmbariClusterServices(sparkService);
         postAmbariClusterHosts(sparkService);
@@ -134,7 +136,7 @@ public class AmbariMock extends AbstractModelMock {
 
     private void postAmbariClusters(Service sparkService) {
         sparkService.post(AMBARI_API_ROOT + "/clusters/:cluster", (req, resp) -> {
-            getModel().setClusterCreated(true);
+            getDefaultModel().setClusterCreated(true);
             return new EmptyAmbariResponse().handle(req, resp);
         }, gson()::toJson);
     }
@@ -162,7 +164,7 @@ public class AmbariMock extends AbstractModelMock {
 
     private void getAmbariClusters(String clusterName, Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
         sparkService.get(AMBARI_API_ROOT + "/clusters", (req, resp) -> {
-            ITResponse itResp = getModel().isClusterCreated() ? new AmbariClusterResponse(instanceMap, clusterName) : new EmptyAmbariClusterResponse();
+            ITResponse itResp = getDefaultModel().isClusterCreated() ? new AmbariClusterResponse(instanceMap, clusterName) : new EmptyAmbariClusterResponse();
             return itResp.handle(req, resp);
         });
     }
@@ -198,7 +200,7 @@ public class AmbariMock extends AbstractModelMock {
 
     private void getAmbariClusterConfigurationVersions(Service sparkService) {
         sparkService.get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_NAME_CONFIGURATIONS_SERVICE_CONFIG_VERSIONS,
-                new AmbariServiceConfigResponse(getModel().getMockServerAddress(), getModel().getSshPort()), gson()::toJson);
+                new AmbariServiceConfigResponse(getDefaultModel().getMockServerAddress(), getDefaultModel().getSshPort()), gson()::toJson);
     }
 
     private void getAmbariClusterHostComponents(Service sparkService) {
@@ -218,7 +220,7 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmbariViews(Service sparkService) {
-        sparkService.get(AMBARI_API_ROOT + VIEWS, new AmbariViewResponse(getModel().getMockServerAddress()));
+        sparkService.get(AMBARI_API_ROOT + VIEWS, new AmbariViewResponse(getDefaultModel().getMockServerAddress()));
     }
 
     private void postAmbariVersionDefinitions(Service sparkService) {
@@ -267,7 +269,7 @@ public class AmbariMock extends AbstractModelMock {
 
     private void postAmbariCluster(Service sparkService) {
         sparkService.post(AMBARI_API_ROOT + CLUSTERS_CLUSTER, (request, response) -> {
-            getModel().setClusterName(request.params("cluster"));
+            getDefaultModel().setClusterName(request.params("cluster"));
             response.type("text/plain");
             return "";
         });

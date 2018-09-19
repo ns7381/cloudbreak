@@ -1,4 +1,4 @@
-package com.sequenceiq.it.cloudbreak.newway.mock;
+package com.sequenceiq.it.cloudbreak.newway.mock.model;
 
 import static com.sequenceiq.it.cloudbreak.newway.Mock.gson;
 import static com.sequenceiq.it.spark.ITResponse.MOCK_ROOT;
@@ -10,6 +10,8 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.sequenceiq.cloudbreak.cloud.model.CloudInstance;
 import com.sequenceiq.cloudbreak.cloud.model.CloudVmMetaDataStatus;
+import com.sequenceiq.it.cloudbreak.newway.mock.AbstractModelMock;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.spark.spi.CloudMetaDataStatuses;
 import com.sequenceiq.it.spark.spi.CloudVmInstanceStatuses;
 
@@ -23,13 +25,13 @@ public class SPIMock extends AbstractModelMock {
 
     public static final String CLOUD_METADATA_STATUSES = "/cloud_metadata_statuses";
 
-    public SPIMock(Service sparkService, Model model) {
-        super(sparkService, model);
+    public SPIMock(Service sparkService, DefaultModel defaultModel) {
+        super(sparkService, defaultModel);
     }
 
     public void addSPIEndpoints() {
         Service sparkService = getSparkService();
-        Map<String, CloudVmMetaDataStatus> instanceMap = getModel().getInstanceMap();
+        Map<String, CloudVmMetaDataStatus> instanceMap = getDefaultModel().getInstanceMap();
         postMockProviderMetadataStatus(sparkService, instanceMap);
         postMockProviderInstanceStatus(sparkService, instanceMap);
         postMockProviderTerminateInstance(sparkService, instanceMap);
@@ -39,7 +41,7 @@ public class SPIMock extends AbstractModelMock {
         sparkService.post(MOCK_ROOT + TERMINATE_INSTANCES, (request, response) -> {
             List<CloudInstance> cloudInstances = new Gson().fromJson(request.body(), new TypeToken<List<CloudInstance>>() {
             }.getType());
-            cloudInstances.forEach(cloudInstance -> getModel().terminateInstance(instanceMap, cloudInstance.getInstanceId()));
+            cloudInstances.forEach(cloudInstance -> getDefaultModel().terminateInstance(instanceMap, cloudInstance.getInstanceId()));
             return null;
         }, gson()::toJson);
     }

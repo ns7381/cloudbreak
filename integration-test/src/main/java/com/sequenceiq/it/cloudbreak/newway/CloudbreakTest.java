@@ -69,6 +69,11 @@ public class CloudbreakTest extends GherkinTest {
         testContext.putContextParam(USER, defaultUaaUser);
         testContext.putContextParam(PASSWORD, defaultUaaPassword);
 
+        testParameter.put("INTEGRATIONTEST_CLOUDBREAK_SERVER", server + cbRootContextPath);
+        testParameter.put("INTEGRATIONTEST_UAA_SERVER", uaaServer);
+        testParameter.put("INTEGRATIONTEST_UAA_USER", defaultUaaUser);
+        testParameter.put("INTEGRATIONTEST_UAA_PASSWORD", defaultUaaPassword);
+
         try {
             CloudbreakClient client = CloudbreakClient.isCreated();
             client.create(testContext);

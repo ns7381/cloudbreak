@@ -4,11 +4,13 @@ import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.ger.StrategyV2;
 
 public abstract class Entity {
-    private final String entityId;
+    private String entityId;
 
     private Strategy creationStrategy;
 
     private StrategyV2 creationStrategyV2;
+
+    public Entity(){}
 
     protected Entity(String id) {
         entityId = id;

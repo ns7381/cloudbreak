@@ -3,15 +3,15 @@ package com.sequenceiq.it.cloudbreak.newway.mock;
 import spark.Service;
 
 public abstract class AbstractModelMock extends AbstractMock {
-    private final Model model;
+    private final DefaultModel defaultModel;
 
-    public AbstractModelMock(Service sparkService, Model model) {
+    public AbstractModelMock(Service sparkService, DefaultModel defaultModel) {
         super(sparkService);
-        this.model = model;
+        this.defaultModel = defaultModel;
     }
 
-    public Model getModel() {
-        return model;
+    public DefaultModel getDefaultModel() {
+        return defaultModel;
     }
 
 }

@@ -7,13 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.mockserver.integration.ClientAndServer;
+
 import com.sequenceiq.it.cloudbreak.newway.mock.MockModel;
 import com.sequenceiq.it.verification.Call;
 
 import spark.Response;
 import spark.Service;
 
-public class MockEntity extends Entity {
+public class SparkMockEntity extends Entity {
     private int port;
 
     private String hostname;
@@ -28,11 +30,16 @@ public class MockEntity extends Entity {
 
     private Service sparkService;
 
-    protected MockEntity(String id, String hostname, int port) {
+    private ClientAndServer mockServer;
+
+    public SparkMockEntity(){
+
+    }
+
+    public SparkMockEntity(String id, String hostname, int port) {
         super(id);
         this.port = port;
         this.hostname = hostname;
-        //initSparkService();
     }
 
     public Map<Call, Response> getRequestResponseMap() {
@@ -90,7 +97,7 @@ public class MockEntity extends Entity {
         return port;
     }
 
-    public Service getSparkService() {
+    protected Service getSparkService() {
         return sparkService;
     }
 

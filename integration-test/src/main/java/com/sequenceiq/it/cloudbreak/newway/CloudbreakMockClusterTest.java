@@ -2,6 +2,8 @@ package com.sequenceiq.it.cloudbreak.newway;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -21,6 +23,10 @@ public class CloudbreakMockClusterTest extends CloudbreakTest {
 
     private static final String WARNING_TEXT = "Following variables must be set whether as environment variables or (test) application.yaml: "
             + "INTEGRATIONTEST_CLOUDBREAK_SERVER INTEGRATIONTEST_UAA_SERVER INTEGRATIONTEST_UAA_USER INTEGRATIONTEST_UAA_PASSWORD";
+
+    @Autowired
+    @Qualifier("pooledSparkEntity")
+    private SparkMockEntity sparkInstance;
 
     private CloudProvider mockProvider;
 
@@ -42,6 +48,7 @@ public class CloudbreakMockClusterTest extends CloudbreakTest {
 
     @BeforeSuite
     public void startAndSetImageCatalog(ITestContext context) throws Exception {
+
         mockSetup(context);
 
         try {

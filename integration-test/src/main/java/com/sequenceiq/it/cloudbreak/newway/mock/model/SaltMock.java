@@ -1,4 +1,4 @@
-package com.sequenceiq.it.cloudbreak.newway.mock;
+package com.sequenceiq.it.cloudbreak.newway.mock.model;
 
 import static com.sequenceiq.it.cloudbreak.newway.Mock.gson;
 import static com.sequenceiq.it.spark.ITResponse.SALT_API_ROOT;
@@ -22,6 +22,8 @@ import com.google.gson.JsonParser;
 import com.sequenceiq.cloudbreak.cloud.model.CloudVmMetaDataStatus;
 import com.sequenceiq.cloudbreak.orchestrator.model.GenericResponse;
 import com.sequenceiq.cloudbreak.orchestrator.model.GenericResponses;
+import com.sequenceiq.it.cloudbreak.newway.mock.AbstractModelMock;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.spark.salt.SaltApiRunPostResponse;
 import com.sequenceiq.it.util.HostNameUtil;
 
@@ -45,12 +47,12 @@ public class SaltMock extends AbstractModelMock {
 
     public static final String SALT_HEALTH = SALT_BOOT_ROOT + "/health";
 
-    public SaltMock(Service sparkService, Model model) {
-        super(sparkService, model);
+    public SaltMock(Service sparkService, DefaultModel defaultModel) {
+        super(sparkService, defaultModel);
     }
 
     public void addSaltMappings() {
-        Map<String, CloudVmMetaDataStatus> instanceMap = getModel().getInstanceMap();
+        Map<String, CloudVmMetaDataStatus> instanceMap = getDefaultModel().getInstanceMap();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(objectMapper.getVisibilityChecker().withGetterVisibility(JsonAutoDetect.Visibility.NONE));
         Service sparkService = getSparkService();
