@@ -34,6 +34,8 @@ public class Credential extends CredentialEntity {
     }
 
     public static CredentialEntity valid() {
+//        String credentialName = getTestParameter().get("mockCredentialName");
+//        return credentialName == null ? CREDENTIAL_DEFAULT_NAME : credentialName;
         return request()
                 .withName("autotesting-mock-cred")
                 .withDescription(CREDENTIAL_DEFAULT_DESCRIPTION)

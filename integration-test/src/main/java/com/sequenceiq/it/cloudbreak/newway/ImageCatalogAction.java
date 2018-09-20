@@ -69,11 +69,11 @@ public class ImageCatalogAction {
         CloudbreakClient client;
         client = integrationTestContext.getContextParam(CloudbreakClient.CLOUDBREAK_CLIENT,
                 CloudbreakClient.class);
-        imageCatalogEntity.setRequestByName(
+        imageCatalogEntity.setRequest(
                 client.getCloudbreakClient()
                         .imageCatalogEndpoint().getRequestfromName(imageCatalogEntity.getRequest().getName()));
 
-        logJSON("Imagecatalog get response by provider: ", imageCatalogEntity.getRequestByName());
+        logJSON("Imagecatalog get response by provider: ", imageCatalogEntity.getRequest());
     }
 
     public static void getAll(IntegrationTestContext integrationTestContext, Entity entity) throws Exception {

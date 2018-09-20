@@ -1,8 +1,11 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.sequenceiq.cloudbreak.api.model.stack.StackAuthenticationRequest;
 import com.sequenceiq.cloudbreak.api.model.stack.StackResponse;
@@ -15,8 +18,12 @@ import com.sequenceiq.cloudbreak.api.model.v2.NetworkV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.PlacementSettings;
 import com.sequenceiq.cloudbreak.api.model.v2.StackV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.Tags;
+import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
+import com.sequenceiq.it.cloudbreak.newway.entity.NetworkV2Entity;
+import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
 
 public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackResponse> {
+
     public static final String STACK = "STACK";
 
     StackEntity(String newId) {
@@ -95,6 +102,25 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
         return this;
     }
 
+    public StackEntity withInstanceGroupsEntity(Collection<InstanceGroupEntity> instanceGroups) {
+        getRequest().setInstanceGroups(instanceGroups.stream()
+                .map(InstanceGroupEntity::getRequest)
+                .collect(Collectors.toList()));
+        return this;
+    }
+
+    public StackEntity withInstanceGroups(InstanceGroupEntity... instanceGroups) {
+        getRequest().setInstanceGroups(Stream.of(instanceGroups)
+                .map(InstanceGroupEntity::getRequest)
+                .collect(Collectors.toList()));
+        return this;
+    }
+
+    public StackEntity withNetwork(NetworkV2Entity network) {
+        getRequest().setNetwork(network.getRequest());
+        return this;
+    }
+
     public StackEntity withNetwork(NetworkV2Request network) {
         getRequest().setNetwork(network);
         return this;
@@ -115,6 +141,11 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
         return this;
     }
 
+    public StackEntity withStackAuthentication(StackAuthentication stackAuthentication) {
+        getRequest().setStackAuthentication(stackAuthentication.getRequest());
+        return this;
+    }
+
     public StackEntity withUserDefinedTags(Map<String, String> tags) {
         if (getRequest().getTags() == null) {
             getRequest().setTags(new Tags());
@@ -125,6 +156,11 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
 
     public StackEntity withAmbariVersion(String version) {
         getRequest().setAmbariVersion(version);
+        return this;
+    }
+
+    public StackEntity withGatewayPort(int port) {
+        getRequest().setGatewayPort(port);
         return this;
     }
 

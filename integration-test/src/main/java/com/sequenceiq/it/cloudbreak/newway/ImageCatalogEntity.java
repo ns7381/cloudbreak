@@ -9,9 +9,7 @@ public class ImageCatalogEntity extends AbstractCloudbreakEntity<ImageCatalogReq
 
     public static final String IMAGE_CATALOG_URL = "IMAGE_CATALOG_URL";
 
-    private ImagesResponse response;
-
-    private ImageCatalogRequest request;
+    private ImagesResponse imagesResponse;
 
     ImageCatalogEntity(String newId) {
         super(newId);
@@ -34,18 +32,10 @@ public class ImageCatalogEntity extends AbstractCloudbreakEntity<ImageCatalogReq
     }
 
     public ImagesResponse getResponseByProvider() {
-        return response;
+        return imagesResponse;
     }
 
-    public void setResponseByProvider(ImagesResponse response) {
-        this.response = response;
-    }
-
-    public ImageCatalogRequest getRequestByName() {
-        return request;
-    }
-
-    public void setRequestByName(ImageCatalogRequest request) {
-        this.request = request;
+    public void setResponseByProvider(ImagesResponse imagesResponse) {
+        this.imagesResponse = imagesResponse;
     }
 }

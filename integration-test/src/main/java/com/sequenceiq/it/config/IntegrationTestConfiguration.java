@@ -11,6 +11,7 @@ import org.testng.TestNG;
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.SuiteContext;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
+import com.sequenceiq.it.cloudbreak.newway.TestParameter;
 
 @Configuration
 @ComponentScan("com.sequenceiq.it")
@@ -39,7 +40,12 @@ public class IntegrationTestConfiguration {
     @Bean
     public CloudbreakClient cloudbreakClient(IntegrationTestContext integrationTestContext) throws Exception {
         CloudbreakClient cloudbreakClient = com.sequenceiq.it.cloudbreak.newway.CloudbreakClient.isCreated();
-        cloudbreakClient.create(integrationTestContext, cloudbreakClient);
+        cloudbreakClient.create(integrationTestContext);
         return cloudbreakClient;
+    }
+
+    @Bean
+    public TestParameter testParameter() {
+        return new TestParameter();
     }
 }

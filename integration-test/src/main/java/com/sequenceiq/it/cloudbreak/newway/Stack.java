@@ -18,9 +18,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.testng.Assert;
 
 import com.sequenceiq.cloudbreak.api.model.ImageJson;
@@ -31,13 +35,24 @@ import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupResponse;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceMetaDataJson;
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.SshService;
-import com.sequenceiq.it.cloudbreak.newway.cloud.MockCloudProvider;
+import com.sequenceiq.it.cloudbreak.newway.cloud.v2.CloudProvider;
+import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
+import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
 import com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackPostV3Strategy;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
 
+@Component
+@Scope("prototype")
 public class Stack extends StackEntity {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Stack.class);
+
+    @Inject
+    private CloudProvider cloudProvider;
+
+    @Inject
+    private TestParameter testParameter;
 
     public static Function<IntegrationTestContext, Stack> getTestContextStack(String key) {
         return testContext -> testContext.getContextParam(key, Stack.class);
@@ -56,16 +71,17 @@ public class Stack extends StackEntity {
     }
 
     public static StackEntity valid() {
-        MockCloudProvider provider = new MockCloudProvider(new TestParameter());
-        return request()
+        Stack request = ApplicationContextProvider.getBean(Stack.class);
+        return request
                 .withInputs(emptyMap())
                 .withName("name")
-                .withRegion(provider.region())
-                .withAvailabilityZone(provider.availabilityZone())
-                .withInstanceGroups(provider.instanceGroups())
-                .withNetwork(provider.newNetwork())
-                .withCredentialName(provider.getCredentialName())
-                .withStackAuthentication(provider.stackauth());
+                .withRegion(request.cloudProvider.region())
+                .withAvailabilityZone(request.cloudProvider.availabilityZone())
+                .withInstanceGroupsEntity(InstanceGroupEntity.valid())
+                .withNetwork(request.cloudProvider.newNetwork())
+                .withCredentialName(Credential.valid().getName())
+                .withGatewayPort(9444)
+                .withStackAuthentication(StackAuthentication.valid());
     }
 
     public static Stack isCreated() {
@@ -118,7 +134,7 @@ public class Stack extends StackEntity {
         return delete(STACK, strategy);
     }
 
-    public static Action<Stack> makeNodeUnhealthy(String  hostgroup, int nodeCount) {
+    public static Action<Stack> makeNodeUnhealthy(String hostgroup, int nodeCount) {
         return new Action<>(getTestContextStack(STACK), new UnhealthyNodeStrategy(hostgroup, nodeCount));
     }
 
@@ -239,7 +255,7 @@ public class Stack extends StackEntity {
         });
     }
 
-    public static Assertion<Stack> checkRecipes(String[] searchOnHost, String[] files, String privateKey, String sshCommand,  int require) {
+    public static Assertion<Stack> checkRecipes(String[] searchOnHost, String[] files, String privateKey, String sshCommand, int require) {
         return checkRecipes(searchOnHost, files, privateKey, Optional.ofNullable(sshCommand), require);
     }
 
