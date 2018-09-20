@@ -109,6 +109,10 @@ public class SparkServer {
         return sparkService;
     }
 
+    public int getPort() {
+        return port;
+    }
+
     public void stop() {
         if (sparkService != null) {
             sparkService.stop();

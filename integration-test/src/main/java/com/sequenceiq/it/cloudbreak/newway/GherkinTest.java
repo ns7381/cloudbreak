@@ -31,9 +31,6 @@ public class GherkinTest extends AbstractTestNGSpringContextTests {
     @Inject
     private CloudbreakClient cloudbreakClient;
 
-    @Inject
-    private TestParameter testParameter;
-
     protected IntegrationTestContext getItContext() {
         return itContext;
     }

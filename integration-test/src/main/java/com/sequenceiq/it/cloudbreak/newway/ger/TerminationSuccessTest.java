@@ -11,15 +11,15 @@ import com.sequenceiq.it.cloudbreak.newway.StackEntity;
 import com.sequenceiq.it.cloudbreak.newway.strategy.StackPostStrategy;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
 
-public class TerninationTest extends AbstractIntegrationTest {
+public class TerminationSuccessTest extends AbstractIntegrationTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TerninationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TerminationSuccessTest.class);
 
     @Test
     public void testCreateNewRegularCluster() throws Exception {
 
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
-        String clusterName = "mockcluster22";
+        String clusterName = "mockcluster";
         StackEntity stackEntity = null;
         try {
             Cluster cluster = Cluster.request().withAmbariRequest(AmbariRequestTest.def().withName(blueprintName).build());

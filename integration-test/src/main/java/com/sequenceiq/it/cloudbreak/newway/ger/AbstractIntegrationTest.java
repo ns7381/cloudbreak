@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -27,9 +27,7 @@ public abstract class AbstractIntegrationTest extends GherkinTest {
     @Inject
     private CloudbreakClient cloudbreakClient;
 
-    @Inject
-    private ApplicationContext applicationContext;
-
+    @Autowired
     private SparkServer sparkServer;
 
     @BeforeSuite
@@ -39,11 +37,10 @@ public abstract class AbstractIntegrationTest extends GherkinTest {
 
     @BeforeMethod
     public void beforeMethod() throws Exception {
-        sparkServer = applicationContext.getBean(SparkServer.class, "localhost", 9444);
         sparkServer.initSparkService();
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
-        String imageCatalogAddress = sparkServer.startImageCatalog(9444);
+        String imageCatalogAddress = sparkServer.startImageCatalog(sparkServer.getPort());
         given(ImageCatalog.valid().withUrl(imageCatalogAddress), new ImageCatalogCreateStrategy(), "an image catalog");
         ImageCatalogV3Action.putSetDefaultByName(getItContext(), ImageCatalog.valid(), cloudbreakClient);
         given(Credential.valid().withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint())), new CredentialCreateStrategy(), "a credential");

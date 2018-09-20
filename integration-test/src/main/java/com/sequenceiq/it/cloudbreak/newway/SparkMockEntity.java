@@ -76,6 +76,7 @@ public class SparkMockEntity extends Entity {
 
     public void restart() {
         stop();
+        sparkService = Service.ignite();
         initSparkService();
     }
 
