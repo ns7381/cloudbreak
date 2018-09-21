@@ -4,7 +4,7 @@
     <test name="Clustertests">
         <classes>
             <class name="com.sequenceiq.it.cloudbreak.newway.testcase.TerminationSuccessTest" />
-            <class name="com.sequenceiq.it.cloudbreak.newway.testcase.TerninationTest" />
+            <class name="com.sequenceiq.it.cloudbreak.newway.testcase.TerminationTest" />
         </classes>
     </test>
 </suite>
