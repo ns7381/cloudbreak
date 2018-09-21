@@ -13,7 +13,7 @@ import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.ImageCatalog;
 import com.sequenceiq.it.cloudbreak.newway.Stack;
 import com.sequenceiq.it.cloudbreak.newway.action.CredentialCreateAction;
-import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateAction;
+import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateIfNotExistsAction;
 import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.AmbariEntity;
@@ -33,10 +33,10 @@ public class TerminationSuccessTest extends AbstractIntegrationTest {
         sparkServer.initSparkService();
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
-        String imageCatalogAddress = sparkServer.startImageCatalog(9444);
+        String imageCatalogAddress = sparkServer.startImageCatalog(sparkServer.getPort());
         testContext.given();
         testContext.given(ImageCatalog.class).withUrl(imageCatalogAddress)
-                .when(new ImageCatalogCreateAction())
+                .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
                 .when(new CredentialCreateAction());

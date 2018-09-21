@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 
-import com.sequenceiq.it.cloudbreak.newway.ger.SparkServer;
+import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 
 @Configuration
 public class MockPoolConfiguration {

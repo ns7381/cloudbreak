@@ -13,7 +13,7 @@ import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.ImageCatalog;
 import com.sequenceiq.it.cloudbreak.newway.Stack;
 import com.sequenceiq.it.cloudbreak.newway.action.CredentialCreateAction;
-import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateAction;
+import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateIfNotExistsAction;
 import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.AmbariEntity;
@@ -33,10 +33,10 @@ public class TerninationTest extends AbstractIntegrationTest {
         sparkServer.initSparkService();
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
-        String imageCatalogAddress = sparkServer.startImageCatalog(9444);
+        String imageCatalogAddress = sparkServer.startImageCatalog(sparkServer.getPort());
         testContext.given();
         testContext.given(ImageCatalog.class).withUrl(imageCatalogAddress)
-                .when(new ImageCatalogCreateAction())
+                .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
                 .when(new CredentialCreateAction());
@@ -47,8 +47,16 @@ public class TerninationTest extends AbstractIntegrationTest {
     public void tear(Object[] data) {
         ((SparkServer) data[1]).stop();
         TestContext testContext = (TestContext) data[0];
-        testContext.when(CredentialEntity.class, CredentialV3Action::deleteV2);
-        testContext.when(ImageCatalog.class, ImageCatalog::deleteV2);
+        try {
+            testContext.when(CredentialEntity.class, CredentialV3Action::deleteV2);
+        } catch (Exception e) {
+
+        }
+        try {
+            testContext.when(ImageCatalog.class, ImageCatalog::deleteV2);
+        } catch (Exception e) {
+
+        }
     }
 
     @Test(dataProvider = "testContext")
@@ -57,7 +65,7 @@ public class TerninationTest extends AbstractIntegrationTest {
         String clusterName = "mockcluster";
         testContext.given(ClusterEntity.class).withName(clusterName)
                 .given(AmbariEntity.class).withBlueprintName(blueprintName)
-                .given(Stack.class).withName(clusterName)
+                .given(Stack.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
                 .when(Stack.postV2())
                 .then(Stack::waitAndCheckClusterAndStackAvailabilityStatus)
                 .when(Stack.class, StackV3Action::deleteV2)

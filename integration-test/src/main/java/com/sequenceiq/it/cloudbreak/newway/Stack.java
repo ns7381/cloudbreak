@@ -82,7 +82,6 @@ public class Stack extends StackEntity {
                 .withInstanceGroupsEntity(InstanceGroupEntity.defaultHostGroup(getTestContext()))
                 .withNetwork(getCloudProvider().newNetwork(getTestContext()))
                 .withCredentialName(getTestContext().init(CredentialEntity.class).getName())
-                .withGatewayPort(9444)
                 .withStackAuthentication(getTestContext().init(StackAuthentication.class));
     }
 

@@ -27,6 +27,9 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     @Inject
     private TestParameter testParameter;
 
+    @Inject
+    private SparkServer sparkServer;
+
     @BeforeSuite
     public void beforeSuite(ITestContext testngContext) {
 
@@ -44,7 +47,6 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
 
     @DataProvider
     public Object[][] testContext() {
-        SparkServer sparkServer = applicationContext.getBean(SparkServer.class, "localhost", 9444);
         return new Object[][]{{new TestContext(testParameter), sparkServer}};
     }
 }
