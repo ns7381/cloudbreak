@@ -1,11 +1,12 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import com.sequenceiq.it.IntegrationTestContext;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 
+@Prototype
 public class SecurityRules extends SecurityRulesEntity {
 
     static Function<IntegrationTestContext, SecurityRules> getTestContext(String key) {
@@ -16,15 +17,21 @@ public class SecurityRules extends SecurityRulesEntity {
         return testContext -> new SecurityRules();
     }
 
+    SecurityRules() {
+    }
+
+    public SecurityRules(TestContext testContext) {
+        super(testContext);
+    }
+
     public static SecurityRules request() {
         return new SecurityRules();
     }
 
-    public static List<SecurityRules> valid() {
-        return List.of(request()
-                .withSubnet("0.0.0.0/0")
+    public SecurityRules valid() {
+        return withSubnet("0.0.0.0/0")
                 .withProtocol("tcp")
-                .withPorts("22,443,8443,9443,8080"));
+                .withPorts("22,443,8443,9443,8080");
     }
 
     public static Action<SecurityRules> getDefaultSecurityRules(String key) {

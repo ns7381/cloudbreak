@@ -5,21 +5,23 @@ import java.util.Map;
 import com.sequenceiq.cloudbreak.api.model.NetworkResponse;
 import com.sequenceiq.cloudbreak.api.model.v2.NetworkV2Request;
 import com.sequenceiq.it.cloudbreak.newway.AbstractCloudbreakEntity;
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 
-public class NetworkV2Entity extends AbstractCloudbreakEntity<NetworkV2Request, NetworkResponse> {
+@Prototype
+public class NetworkV2Entity extends AbstractCloudbreakEntity<NetworkV2Request, NetworkResponse, NetworkV2Entity> {
     public static final String NETWORK = "NETWORK";
 
-    NetworkV2Entity(String newId) {
-        super(newId);
-        setRequest(new NetworkV2Request());
+    public NetworkV2Entity(NetworkV2Request request, TestContext testContext) {
+        super(request, testContext);
     }
 
-    NetworkV2Entity() {
-        this(NETWORK);
+    public NetworkV2Entity(TestContext testContext) {
+        super(new NetworkV2Request(), testContext);
     }
 
-    public static NetworkV2Entity valid() {
-        return new NetworkV2Entity();
+    public NetworkV2Entity valid() {
+        return this;
     }
 
     public NetworkV2Entity withParameters(Map<String, Object> parameters) {

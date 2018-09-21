@@ -1,16 +1,20 @@
-package com.sequenceiq.it.cloudbreak.newway.ger;
+package com.sequenceiq.it.cloudbreak.newway.config;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
+import com.sequenceiq.it.cloudbreak.newway.TestParameter;
 
 @Component
 public class CloudbreakServer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CloudbreakServer.class);
 
     @Value("${integrationtest.cloudbreak.server}")
     private String server;
@@ -28,13 +32,13 @@ public class CloudbreakServer {
     private String defaultUaaPassword;
 
     @Inject
-    private IntegrationTestContext integrationTestContext;
+    private TestParameter testParameter;
 
     @PostConstruct
-    private void ps() {
-        integrationTestContext.putContextParam(CloudbreakTest.CLOUDBREAK_SERVER_ROOT, server + cbRootContextPath);
-        integrationTestContext.putContextParam(CloudbreakTest.IDENTITY_URL, uaaServer);
-        integrationTestContext.putContextParam(CloudbreakTest.USER, defaultUaaUser);
-        integrationTestContext.putContextParam(CloudbreakTest.PASSWORD, defaultUaaPassword);
+    private void init() {
+        testParameter.put(CloudbreakTest.CLOUDBREAK_SERVER_ROOT, server + cbRootContextPath);
+        testParameter.put(CloudbreakTest.IDENTITY_URL, uaaServer);
+        testParameter.put(CloudbreakTest.USER, defaultUaaUser);
+        testParameter.put(CloudbreakTest.PASSWORD, defaultUaaPassword);
     }
 }

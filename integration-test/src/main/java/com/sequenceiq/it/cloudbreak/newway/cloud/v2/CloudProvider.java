@@ -2,6 +2,7 @@ package com.sequenceiq.it.cloudbreak.newway.cloud.v2;
 
 import java.util.Map;
 
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.NetworkV2Entity;
 import com.sequenceiq.it.cloudbreak.newway.entity.TemplateEntity;
 
@@ -11,7 +12,7 @@ public interface CloudProvider {
 
     String region();
 
-    TemplateEntity template();
+    TemplateEntity template(TestContext testContext);
 
     String getVpcId();
 
@@ -21,11 +22,11 @@ public interface CloudProvider {
 
     Map<String, Object> subnetProperties();
 
-    NetworkV2Entity newNetwork();
+    NetworkV2Entity newNetwork(TestContext testContext);
 
-    NetworkV2Entity existingNetwork();
+    NetworkV2Entity existingNetwork(TestContext testContext);
 
-    NetworkV2Entity existingSubnet();
+    NetworkV2Entity existingSubnet(TestContext testContext);
 
     String getSubnetCIDR();
 }

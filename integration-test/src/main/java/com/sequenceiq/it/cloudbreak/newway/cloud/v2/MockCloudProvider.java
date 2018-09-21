@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.sequenceiq.it.cloudbreak.newway.TestParameter;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.NetworkV2Entity;
 import com.sequenceiq.it.cloudbreak.newway.entity.TemplateEntity;
 
@@ -60,7 +61,7 @@ public class MockCloudProvider extends AbstractCloudProvider {
     }
 
     @Override
-    public TemplateEntity template() {
+    public TemplateEntity template(TestContext testContext) {
         String instanceTypeDefaultValue = "large";
         String instanceTypeParam = getTestParameter().get("mockInstanceType");
 
@@ -73,7 +74,7 @@ public class MockCloudProvider extends AbstractCloudProvider {
         String volumeTypeDefault = "magnetic";
         String volumeTypeParam = getTestParameter().get("mockInstanceVolumeType");
 
-        return TemplateEntity.valid()
+        return testContext.init(TemplateEntity.class)
                 .withInstanceType(instanceTypeParam == null ? instanceTypeDefaultValue : instanceTypeParam)
                 .withVolumeCount(volumeCountParam == null ? volumeCountDefault : Integer.parseInt(volumeCountParam))
                 .withVolumeSize(volumeSizeParam == null ? volumeSizeDefault : Integer.parseInt(volumeSizeParam))
@@ -115,21 +116,21 @@ public class MockCloudProvider extends AbstractCloudProvider {
     }
 
     @Override
-    public NetworkV2Entity newNetwork() {
-        return NetworkV2Entity.valid()
+    public NetworkV2Entity newNetwork(TestContext testContext) {
+        return testContext.init(NetworkV2Entity.class)
                 .withSubnetCIDR(getSubnetCIDR());
     }
 
     @Override
-    public NetworkV2Entity existingNetwork() {
-        return NetworkV2Entity.valid()
+    public NetworkV2Entity existingNetwork(TestContext testContext) {
+        return testContext.init(NetworkV2Entity.class)
                 .withSubnetCIDR(getSubnetCIDR())
                 .withParameters(networkProperties());
     }
 
     @Override
-    public NetworkV2Entity existingSubnet() {
-        return NetworkV2Entity.valid()
+    public NetworkV2Entity existingSubnet(TestContext testContext) {
+        return testContext.given(NetworkV2Entity.class)
                 .withParameters(subnetProperties());
     }
 }

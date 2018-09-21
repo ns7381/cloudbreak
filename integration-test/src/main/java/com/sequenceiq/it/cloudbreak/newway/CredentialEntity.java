@@ -1,20 +1,21 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
-import com.sequenceiq.cloudbreak.api.model.CredentialRequest;
-import com.sequenceiq.cloudbreak.api.model.CredentialResponse;
-
 import java.util.Map;
 
-public class CredentialEntity extends AbstractCloudbreakEntity<CredentialRequest, CredentialResponse> {
+import com.sequenceiq.cloudbreak.api.model.CredentialRequest;
+import com.sequenceiq.cloudbreak.api.model.CredentialResponse;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
+
+public class CredentialEntity extends AbstractCloudbreakEntity<CredentialRequest, CredentialResponse, CredentialEntity> {
     public static final String CREDENTIAL = "CREDENTIAL";
 
-    CredentialEntity(String newId) {
-        super(newId);
-        setRequest(new CredentialRequest());
+    CredentialEntity(TestContext testContext) {
+        super(new CredentialRequest(), testContext);
     }
 
     CredentialEntity() {
-        this(CREDENTIAL);
+        super(CREDENTIAL);
+        setRequest(new CredentialRequest());
     }
 
     public CredentialEntity withName(String name) {

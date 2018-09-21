@@ -1,9 +1,5 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
-import static com.sequenceiq.it.cloudbreak.newway.CloudbreakTest.WORKSPACE_ID;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -11,8 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
 import com.sequenceiq.it.IntegrationTestContext;
-import com.sequenceiq.it.cloudbreak.newway.entity.CloudbreakEntity;
-import com.sequenceiq.it.cloudbreak.newway.ger.StrategyV2;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
 import com.sequenceiq.it.cloudbreak.newway.mock.MockPoolConfiguration;
 import com.sequenceiq.it.config.IntegrationTestConfiguration;
@@ -25,11 +19,7 @@ public class GherkinTest extends AbstractTestNGSpringContextTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GherkinTest.class);
 
-    @Inject
-    private IntegrationTestContext itContext;
-
-    @Inject
-    private CloudbreakClient cloudbreakClient;
+    private final IntegrationTestContext itContext = new IntegrationTestContext();
 
     protected IntegrationTestContext getItContext() {
         return itContext;
@@ -47,17 +37,6 @@ public class GherkinTest extends AbstractTestNGSpringContextTests {
         if (entity != null) {
             given(entity, entity.getEntityId());
         }
-    }
-
-    protected <T extends CloudbreakEntity> T given(CloudbreakEntity entity, StrategyV2<T> strategy, String message) throws Exception {
-        if (entity != null) {
-            Log.log("Given " + message);
-            entity.setCreationStrategyV2(strategy);
-
-            Long contextParam = itContext.getContextParam(WORKSPACE_ID, Long.class);
-            entity.create(contextParam, cloudbreakClient);
-        }
-        return (T) entity;
     }
 
     protected void when(Action<?> action, String message) throws Exception {

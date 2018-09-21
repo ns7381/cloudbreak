@@ -1,25 +1,24 @@
 package com.sequenceiq.it.cloudbreak.newway.entity;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.sequenceiq.cloudbreak.api.model.stack.StackAuthenticationRequest;
 import com.sequenceiq.cloudbreak.api.model.stack.StackAuthenticationResponse;
 import com.sequenceiq.it.cloudbreak.newway.AbstractCloudbreakEntity;
-import com.sequenceiq.it.cloudbreak.newway.ApplicationContextProvider;
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 
-@Component
-@Scope("prototype")
-public class StackAuthentication extends AbstractCloudbreakEntity<StackAuthenticationRequest, StackAuthenticationResponse> {
+@Prototype
+public class StackAuthentication extends AbstractCloudbreakEntity<StackAuthenticationRequest, StackAuthenticationResponse, StackAuthentication> {
 
-    protected StackAuthentication() {
-        super("STACKAUTHENTICATION");
-        setRequest(new StackAuthenticationRequest());
+    protected StackAuthentication(StackAuthenticationRequest request, TestContext testContext) {
+        super(request, testContext);
     }
 
-    public static StackAuthentication valid() {
-        return ApplicationContextProvider.getBean(StackAuthentication.class)
-                .withPublicKeyId("publicKeyId");
+    protected StackAuthentication(TestContext testContext) {
+        super(new StackAuthenticationRequest(), testContext);
+    }
+
+    public StackAuthentication valid() {
+        return withPublicKeyId("publicKeyId");
     }
 
     public StackAuthentication withPublicKey(String publicKey) {

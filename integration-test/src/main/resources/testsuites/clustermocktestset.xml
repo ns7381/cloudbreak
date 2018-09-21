@@ -3,8 +3,8 @@
 <suite name="testParalell" thread-count="3" parallel="classes">
     <test name="Clustertests">
         <classes>
-            <class name="com.sequenceiq.it.cloudbreak.newway.ger.TerminationSuccessTest" />
-            <class name="com.sequenceiq.it.cloudbreak.newway.ger.TerninationTest" />
+            <class name="com.sequenceiq.it.cloudbreak.newway.testcase.TerminationSuccessTest" />
+            <class name="com.sequenceiq.it.cloudbreak.newway.testcase.TerninationTest" />
         </classes>
     </test>
 </suite>

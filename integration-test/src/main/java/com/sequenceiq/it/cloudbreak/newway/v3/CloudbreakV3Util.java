@@ -108,15 +108,21 @@ public class CloudbreakV3Util {
             WaitResult waitResult = waitForStatuses(cloudbreakClient, workspaceId, stackName, desiredStatuses);
             if (waitResult == WaitResult.FAILED) {
                 Map<String, Object> statusByNameInWorkspace = cloudbreakClient.stackV3Endpoint().getStatusByNameInWorkspace(workspaceId, stackName);
-                desiredStatuses.forEach((key, value) -> {
-                    ret.put(key, statusByNameInWorkspace.get(key).toString());
-                });
-                StringBuilder builder = new StringBuilder("The stack has failed: ").append(System.lineSeparator());
-                ret.forEach((key, value) -> {
-                    builder.append(key).append(',').append(value).append(System.lineSeparator());
-                });
-                builder.append("statusReason: ").append(statusByNameInWorkspace.get("statusReason"));
-                Assert.fail(builder.toString());
+                if (statusByNameInWorkspace != null) {
+                    desiredStatuses.forEach((key, value) -> {
+                        Object o = statusByNameInWorkspace.get(key);
+                        if (o != null) {
+                            ret.put(key, o.toString());
+                        }
+                    });
+
+                    StringBuilder builder = new StringBuilder("The stack has failed: ").append(System.lineSeparator());
+                    ret.forEach((key, value) -> {
+                        builder.append(key).append(',').append(value).append(System.lineSeparator());
+                    });
+                    builder.append("statusReason: ").append(statusByNameInWorkspace.get("statusReason"));
+                    Assert.fail(builder.toString());
+                }
             }
             if (waitResult == WaitResult.TIMEOUT) {
                 Assert.fail("Timeout happened");

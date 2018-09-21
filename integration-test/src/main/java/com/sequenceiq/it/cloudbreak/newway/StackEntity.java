@@ -18,11 +18,13 @@ import com.sequenceiq.cloudbreak.api.model.v2.NetworkV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.PlacementSettings;
 import com.sequenceiq.cloudbreak.api.model.v2.StackV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.Tags;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
+import com.sequenceiq.it.cloudbreak.newway.entity.ClusterEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.NetworkV2Entity;
 import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
 
-public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackResponse> {
+public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackResponse, Stack> {
 
     public static final String STACK = "STACK";
 
@@ -38,6 +40,17 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
         this(STACK);
     }
 
+    public StackEntity(StackV2Request request) {
+        this();
+        setRequest(request);
+    }
+
+    public StackEntity(TestContext testContext) {
+        super(new StackV2Request(), testContext);
+        getRequest().setGeneral(new GeneralSettings());
+        getRequest().setPlacement(new PlacementSettings());
+    }
+
     public StackEntity withName(String name) {
         getRequest().getGeneral().setName(name);
         setName(name);
@@ -46,6 +59,11 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
 
     public StackEntity withCredentialName(String credentialName) {
         getRequest().getGeneral().setCredentialName(credentialName);
+        return this;
+    }
+
+    public StackEntity withCluster(ClusterEntity cluster) {
+        getRequest().setCluster(cluster.getRequest());
         return this;
     }
 

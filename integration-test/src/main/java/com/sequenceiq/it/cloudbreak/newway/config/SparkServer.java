@@ -1,4 +1,4 @@
-package com.sequenceiq.it.cloudbreak.newway.ger;
+package com.sequenceiq.it.cloudbreak.newway.config;
 
 
 import java.io.File;
@@ -14,10 +14,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
 import com.sequenceiq.it.cloudbreak.newway.mock.ImageCatalogServiceMock;
 import com.sequenceiq.it.spark.ITResponse;
 import com.sequenceiq.it.verification.Call;
@@ -25,8 +24,7 @@ import com.sequenceiq.it.verification.Call;
 import spark.Response;
 import spark.Service;
 
-@Component
-@Scope("prototype")
+@Prototype
 public class SparkServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SparkServer.class);

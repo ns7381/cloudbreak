@@ -9,48 +9,59 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.sequenceiq.cloudbreak.api.model.RecoveryMode;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupResponse;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupType;
 import com.sequenceiq.cloudbreak.api.model.v2.InstanceGroupV2Request;
 import com.sequenceiq.it.cloudbreak.newway.AbstractCloudbreakEntity;
-import com.sequenceiq.it.cloudbreak.newway.ApplicationContextProvider;
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
 import com.sequenceiq.it.cloudbreak.newway.cloud.HostGroupType;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 
-@Component
-@Scope("prototype")
-public class InstanceGroupEntity extends AbstractCloudbreakEntity<InstanceGroupV2Request, InstanceGroupResponse> {
+@Prototype
+public class InstanceGroupEntity extends AbstractCloudbreakEntity<InstanceGroupV2Request, InstanceGroupResponse, InstanceGroupEntity> {
 
     private static final String AUTO = "auto";
 
     private static final String MANUAL = "manual";
 
-    protected InstanceGroupEntity() {
-        super(InstanceGroupEntity.class.getSimpleName().toUpperCase());
-        setRequest(new InstanceGroupV2Request());
+    protected InstanceGroupEntity(InstanceGroupV2Request request, TestContext testContext) {
+        super(request, testContext);
     }
 
-    public static List<InstanceGroupEntity> valid() {
-        return valid(MASTER, COMPUTE, WORKER);
+    protected InstanceGroupEntity(TestContext testContext) {
+        super(new InstanceGroupV2Request(), testContext);
     }
 
-    public static List<InstanceGroupEntity> valid(HostGroupType... groupTypes) {
+    public InstanceGroupEntity valid() {
+        HostGroupType hostGroupType = MASTER;
+        return withRecoveryMode(getRecoveryModeParam(hostGroupType))
+                .withNodeCount(hostGroupType.determineInstanceCount(getTestParameter()))
+                .withGroup(hostGroupType.getName())
+                .withSecurityGroup(getTestContext().init(SecurityGroupEntity.class))
+                .withType(hostGroupType.getInstanceGroupType())
+                .withTemplate(getCloudProvider().template(getTestContext()));
+    }
+
+    public static List<InstanceGroupEntity> defaultHostGroup(TestContext testContext) {
+        return withHostGroup(testContext, MASTER, COMPUTE, WORKER);
+    }
+
+    public static List<InstanceGroupEntity> withHostGroup(TestContext testContext, HostGroupType... groupTypes) {
         return Stream.of(groupTypes)
-                .map(InstanceGroupEntity::create)
+                .map(groupType -> create(testContext, groupType))
                 .collect(Collectors.toList());
     }
 
-    private static InstanceGroupEntity create(HostGroupType hostGroupType) {
-        InstanceGroupEntity bean = ApplicationContextProvider.getBean(InstanceGroupEntity.class);
-        return bean.withRecoveryMode(bean.getRecoveryModeParam(hostGroupType))
-                .withNodeCount(hostGroupType.determineInstanceCount(bean.getTestParameter()))
+    private static InstanceGroupEntity create(TestContext testContext, HostGroupType hostGroupType) {
+        InstanceGroupEntity entity = testContext.init(InstanceGroupEntity.class);
+        return entity
+                .withRecoveryMode(entity.getRecoveryModeParam(hostGroupType))
+                .withNodeCount(hostGroupType.determineInstanceCount(entity.getTestParameter()))
                 .withGroup(hostGroupType.getName())
-                .withSecurityGroup(SecurityGroupEntity.valid())
+                .withSecurityGroup(testContext.init(SecurityGroupEntity.class))
                 .withType(hostGroupType.getInstanceGroupType())
-                .withTemplate(bean.getCloudProvider().template());
+                .withTemplate(entity.getCloudProvider().template(testContext));
     }
 
     public InstanceGroupEntity withNodeCount(int nodeCount) {

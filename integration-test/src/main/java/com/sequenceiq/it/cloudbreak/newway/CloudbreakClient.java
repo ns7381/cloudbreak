@@ -77,5 +77,20 @@ public class CloudbreakClient extends Entity {
         }
         clientEntity.cloudbreakClient = singletonCloudbreakClient;
     }
+
+    public static synchronized CloudbreakClient createProxyCloudbreakClient(TestParameter testParameter) {
+        CloudbreakClient clientEntity = new CloudbreakClient();
+        if (singletonCloudbreakClient == null) {
+            singletonCloudbreakClient = new ProxyCloudbreakClient(
+                    testParameter.get(CloudbreakTest.CLOUDBREAK_SERVER_ROOT),
+                    testParameter.get(CloudbreakTest.IDENTITY_URL),
+                    testParameter.get(CloudbreakTest.USER),
+                    testParameter.get(CloudbreakTest.PASSWORD),
+                    "cloudbreak_shell",
+                    new ConfigKey(false, true, true));
+        }
+        clientEntity.cloudbreakClient = singletonCloudbreakClient;
+        return clientEntity;
+    }
 }
 

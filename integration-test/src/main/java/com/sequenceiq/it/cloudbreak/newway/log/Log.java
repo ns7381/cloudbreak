@@ -1,10 +1,10 @@
 package com.sequenceiq.it.cloudbreak.newway.log;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.testng.Reporter;
-
 import java.io.IOException;
 import java.io.StringWriter;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.testng.Reporter;
 
 public class Log {
     private Log() {
@@ -16,6 +16,10 @@ public class Log {
         mapper.writeValue(writer, jsonObject);
 
         Reporter.log(message + writer);
+    }
+
+    public static void log(String message, Object... args) {
+        log(String.format(message, args));
     }
 
     public static void log(String message) {

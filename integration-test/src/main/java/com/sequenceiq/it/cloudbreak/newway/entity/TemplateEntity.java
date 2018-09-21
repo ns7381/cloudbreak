@@ -11,17 +11,22 @@ import com.sequenceiq.cloudbreak.api.model.v2.template.GcpParameters;
 import com.sequenceiq.cloudbreak.api.model.v2.template.OpenStackParameters;
 import com.sequenceiq.cloudbreak.api.model.v2.template.YarnParameters;
 import com.sequenceiq.it.cloudbreak.newway.AbstractCloudbreakEntity;
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 
-public class TemplateEntity extends AbstractCloudbreakEntity<TemplateV2Request, TemplateResponse> {
+@Prototype
+public class TemplateEntity extends AbstractCloudbreakEntity<TemplateV2Request, TemplateResponse, TemplateEntity> {
 
-    public TemplateEntity() {
-        super(TemplateEntity.class.getSimpleName().toUpperCase());
-        setRequest(new TemplateV2Request());
+    public TemplateEntity(TemplateV2Request request, TestContext testContext) {
+        super(request, testContext);
     }
 
-    public static TemplateEntity valid() {
-        return new TemplateEntity()
-                .withInstanceType("large")
+    public TemplateEntity(TestContext testContext) {
+        super(new TemplateV2Request(), testContext);
+    }
+
+    public TemplateEntity valid() {
+        return withInstanceType("large")
                 .withVolumeCount(1)
                 .withVolumeSize(100)
                 .withVolumeType("magnetic");

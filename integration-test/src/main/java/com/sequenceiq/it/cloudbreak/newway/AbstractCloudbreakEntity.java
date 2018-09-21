@@ -4,11 +4,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.sequenceiq.it.cloudbreak.newway.action.ActionV2;
+import com.sequenceiq.it.cloudbreak.newway.assertion.AssertionV2;
 import com.sequenceiq.it.cloudbreak.newway.cloud.v2.MockCloudProvider;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.CloudbreakEntity;
-import com.sequenceiq.it.cloudbreak.newway.ger.StrategyV2;
 
-public abstract class AbstractCloudbreakEntity<R, S> extends Entity implements CloudbreakEntity {
+public abstract class AbstractCloudbreakEntity<R, S, T extends CloudbreakEntity<T>> extends Entity implements CloudbreakEntity<T> {
 
     @Inject
     private TestParameter testParameter;
@@ -24,10 +26,15 @@ public abstract class AbstractCloudbreakEntity<R, S> extends Entity implements C
 
     private Set<S> responses;
 
-    private StrategyV2<CloudbreakEntity> creationStrategyV2;
+    private TestContext testContext;
 
     protected AbstractCloudbreakEntity(String newId) {
         super(newId);
+    }
+
+    protected AbstractCloudbreakEntity(R request, TestContext testContext) {
+        this.request = request;
+        this.testContext = testContext;
     }
 
     public Set<S> getResponses() {
@@ -70,13 +77,35 @@ public abstract class AbstractCloudbreakEntity<R, S> extends Entity implements C
         return cloudProvider;
     }
 
-    public void setCreationStrategyV2(StrategyV2<? extends CloudbreakEntity> creationStrategyV2) {
-        this.creationStrategyV2 = (StrategyV2<CloudbreakEntity>) creationStrategyV2;
+    protected TestContext getTestContext() {
+        return testContext;
     }
 
-    public void create(Long workpaceId, CloudbreakClient cloudbreakClient) throws Exception {
-        if (creationStrategyV2 != null) {
-            creationStrategyV2.doAction(workpaceId, this, cloudbreakClient);
-        }
+    public T valid() {
+        return null;
+    }
+
+    public Long workspaceId() {
+        return testContext.workspaceId();
+    }
+
+    public T when(Class<T> entityClass, ActionV2<T> action) {
+        return testContext.when(entityClass, action);
+    }
+
+    public T when(String who, ActionV2<T> action) {
+        return testContext.when((T) this, who, action);
+    }
+
+    public T when(ActionV2<T> action) {
+        return testContext.when((T) this, action);
+    }
+
+    public T then(AssertionV2<T> assertion) {
+        return testContext.then((T) this, assertion);
+    }
+
+    public <O extends CloudbreakEntity<O>> O given(Class<O> clss) {
+        return testContext.given(clss);
     }
 }

@@ -18,13 +18,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.testng.Assert;
 
 import com.sequenceiq.cloudbreak.api.model.ImageJson;
@@ -33,26 +29,30 @@ import com.sequenceiq.cloudbreak.api.model.stack.hardware.HardwareInfoGroupRespo
 import com.sequenceiq.cloudbreak.api.model.stack.hardware.HardwareInfoResponse;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupResponse;
 import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceMetaDataJson;
+import com.sequenceiq.cloudbreak.api.model.v2.StackV2Request;
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.SshService;
-import com.sequenceiq.it.cloudbreak.newway.cloud.v2.CloudProvider;
+import com.sequenceiq.it.cloudbreak.newway.action.ActionV2;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
+import com.sequenceiq.it.cloudbreak.newway.strategy.StackPostAction;
 import com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackPostV3Strategy;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
 
-@Component
-@Scope("prototype")
+@Prototype
 public class Stack extends StackEntity {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Stack.class);
 
-    @Inject
-    private CloudProvider cloudProvider;
+    Stack() {
 
-    @Inject
-    private TestParameter testParameter;
+    }
+
+    public Stack(TestContext testContext) {
+        super(testContext);
+    }
 
     public static Function<IntegrationTestContext, Stack> getTestContextStack(String key) {
         return testContext -> testContext.getContextParam(key, Stack.class);
@@ -70,24 +70,31 @@ public class Stack extends StackEntity {
         return new Stack();
     }
 
-    public static StackEntity valid() {
-        Stack request = ApplicationContextProvider.getBean(Stack.class);
-        return request
-                .withInputs(emptyMap())
+    public static StackEntity create(StackV2Request request) {
+        return ApplicationContextProvider.getBean(Stack.class, request);
+    }
+
+    public Stack valid() {
+        return (Stack) withInputs(emptyMap())
                 .withName("name")
-                .withRegion(request.cloudProvider.region())
-                .withAvailabilityZone(request.cloudProvider.availabilityZone())
-                .withInstanceGroupsEntity(InstanceGroupEntity.valid())
-                .withNetwork(request.cloudProvider.newNetwork())
-                .withCredentialName(Credential.valid().getName())
+                .withRegion(getCloudProvider().region())
+                .withAvailabilityZone(getCloudProvider().availabilityZone())
+                .withInstanceGroupsEntity(InstanceGroupEntity.defaultHostGroup(getTestContext()))
+                .withNetwork(getCloudProvider().newNetwork(getTestContext()))
+                .withCredentialName(getTestContext().init(CredentialEntity.class).getName())
                 .withGatewayPort(9444)
-                .withStackAuthentication(StackAuthentication.valid());
+                .withStackAuthentication(getTestContext().init(StackAuthentication.class));
     }
 
     public static Stack isCreated() {
         Stack stack = new Stack();
         stack.setCreationStrategy(StackV3Action::createInGiven);
         return stack;
+    }
+
+
+    public static ActionV2<Stack> postV2() {
+        return new StackPostAction();
     }
 
     public static Action<Stack> post(String key) {
@@ -213,17 +220,18 @@ public class Stack extends StackEntity {
         });
     }
 
-    public static Map<String, String> waitAndCheckClusterAndStackAvailabilityStatus(StackEntity stack, CloudbreakClient cloudbreakClient) {
+    public static Stack waitAndCheckClusterAndStackAvailabilityStatus(TestContext testContext, Stack stack, CloudbreakClient cloudbreakClient) throws Exception {
         StackResponse stackResponse = stack.getResponse();
         String stackName = stackResponse.getName();
         Long workspaceId = stackResponse.getWorkspace().getId();
         Assert.assertNotNull(stackResponse.getName());
         Map<String, String> statuses = waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE");
         statuses.putAll(waitAndCheckClusterStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE"));
-        return statuses;
+        testContext.addStatuses(statuses);
+        return stack;
     }
 
-    public static void waitAndCheckClusterDeletedA(StackEntity stack, IntegrationTestContext t, CloudbreakClient cloudbreakClient) {
+    public static void waitAndCheckClusterDeletedA(StackEntity stack, CloudbreakClient cloudbreakClient) {
         StackResponse stackResponse = stack.getResponse();
         String stackName = stackResponse.getName();
         Long workspaceId = stackResponse.getWorkspace().getId();

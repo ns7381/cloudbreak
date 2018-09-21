@@ -1,11 +1,17 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
+import static com.sequenceiq.it.cloudbreak.newway.log.Log.logJSON;
+
+import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import com.sequenceiq.cloudbreak.api.model.imagecatalog.ImageCatalogRequest;
 import com.sequenceiq.it.IntegrationTestContext;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.v3.ImageCatalogV3Action;
 
+@Prototype
 public class ImageCatalog extends ImageCatalogEntity {
 
     static Function<IntegrationTestContext, ImageCatalog> getTestContext(String key) {
@@ -20,9 +26,15 @@ public class ImageCatalog extends ImageCatalogEntity {
         return new ImageCatalog();
     }
 
-    public static ImageCatalogEntity valid() {
-        return request()
-                .withName("mock-image-catalog");
+    public ImageCatalog(TestContext testContext) {
+        super(new ImageCatalogRequest(), testContext);
+    }
+
+    public ImageCatalog() {
+    }
+
+    public ImageCatalog valid() {
+        return (ImageCatalog) withName("mock-image-catalog");
     }
 
     public static ImageCatalog isCreated() {
@@ -32,13 +44,13 @@ public class ImageCatalog extends ImageCatalogEntity {
     }
 
     public static ImageCatalog isCreatedDeleted() {
-        ImageCatalog  imageCatalog = new ImageCatalog();
+        ImageCatalog imageCatalog = new ImageCatalog();
         imageCatalog.setCreationStrategy(ImageCatalogV3Action::createDeleteInGiven);
         return imageCatalog;
     }
 
     public static ImageCatalog isCreatedAsDefault() {
-        ImageCatalog  imageCatalog = new ImageCatalog();
+        ImageCatalog imageCatalog = new ImageCatalog();
         imageCatalog.setCreationStrategy(ImageCatalogV3Action::createAsDefaultInGiven);
         return imageCatalog;
     }
@@ -64,19 +76,24 @@ public class ImageCatalog extends ImageCatalogEntity {
     }
 
     public static Action<ImageCatalog> getImagesByProvider() {
-        return new Action<>(getNew(), ImageCatalogV3Action::getImagesByProvider); }
+        return new Action<>(getNew(), ImageCatalogV3Action::getImagesByProvider);
+    }
 
     public static Action<ImageCatalog> getImagesByProviderFromImageCatalog(String key) {
-        return new Action<>(getTestContext(key),  ImageCatalogV3Action::getImagesByProviderFromImageCatalog); }
+        return new Action<>(getTestContext(key), ImageCatalogV3Action::getImagesByProviderFromImageCatalog);
+    }
 
     public static Action<ImageCatalog> getImagesByProviderFromImageCatalog() {
-        return getImagesByProviderFromImageCatalog(IMAGE_CATALOG); }
+        return getImagesByProviderFromImageCatalog(IMAGE_CATALOG);
+    }
 
     public static Action<ImageCatalog> getRequestFromName(String key) {
-        return new Action<>(getTestContext(key), ImageCatalogV3Action::getRequestByName); }
+        return new Action<>(getTestContext(key), ImageCatalogV3Action::getRequestByName);
+    }
 
     public static Action<ImageCatalog> getRequestFromName() {
-        return getRequestFromName(IMAGE_CATALOG); }
+        return getRequestFromName(IMAGE_CATALOG);
+    }
 
     public static Action<ImageCatalog> delete(String key) {
         return new Action<>(getTestContext(key), ImageCatalogV3Action::delete);
@@ -96,5 +113,19 @@ public class ImageCatalog extends ImageCatalogEntity {
 
     public static Action<ImageCatalog> setDefault() {
         return setDefault(IMAGE_CATALOG);
+    }
+
+    public static ImageCatalog putSetDefaultByName(TestContext testContext, ImageCatalog entity, CloudbreakClient cloudbreakClient) throws IOException {
+        entity.setResponse(
+                cloudbreakClient.getCloudbreakClient()
+                        .imageCatalogV3Endpoint().putSetDefaultByNameInWorkspace(testContext.workspaceId(), entity.getName()));
+        logJSON("Imagecatalog get response: ", entity.getResponse());
+        return entity;
+    }
+
+    public static ImageCatalog deleteV2(TestContext testContext, ImageCatalog entity, CloudbreakClient cloudbreakClient) {
+        cloudbreakClient.getCloudbreakClient().imageCatalogV3Endpoint()
+                .deleteInWorkspace(testContext.workspaceId(), entity.getName());
+        return entity;
     }
 }

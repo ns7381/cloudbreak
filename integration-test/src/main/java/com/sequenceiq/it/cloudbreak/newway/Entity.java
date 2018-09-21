@@ -3,14 +3,17 @@ package com.sequenceiq.it.cloudbreak.newway;
 import com.sequenceiq.it.IntegrationTestContext;
 
 public abstract class Entity {
+
     private String entityId;
 
     private Strategy creationStrategy;
 
-    public Entity(){}
+    protected Entity(String entityId) {
+        this.entityId = entityId;
+    }
 
-    protected Entity(String id) {
-        entityId = id;
+    protected Entity() {
+        entityId = getClass().getSimpleName().toUpperCase();
     }
 
     String getEntityId() {

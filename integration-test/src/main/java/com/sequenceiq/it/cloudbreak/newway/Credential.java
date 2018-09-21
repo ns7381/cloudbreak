@@ -7,8 +7,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import com.sequenceiq.it.IntegrationTestContext;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 
+@Prototype
 public class Credential extends CredentialEntity {
 
     public static Function<IntegrationTestContext, Credential> getTestContextCredential(String key) {
@@ -23,6 +25,13 @@ public class Credential extends CredentialEntity {
         return testContext -> new Credential();
     }
 
+    public Credential(TestContext testContext) {
+        super(testContext);
+    }
+
+    Credential() {
+    }
+
     public static Credential request() {
         return new Credential();
     }
@@ -33,11 +42,10 @@ public class Credential extends CredentialEntity {
         return credential;
     }
 
-    public static CredentialEntity valid() {
+    public CredentialEntity valid() {
 //        String credentialName = getTestParameter().get("mockCredentialName");
 //        return credentialName == null ? CREDENTIAL_DEFAULT_NAME : credentialName;
-        return request()
-                .withName("autotesting-mock-cred")
+        return  withName("autotesting-mock-cred")
                 .withDescription(CREDENTIAL_DEFAULT_DESCRIPTION)
                 .withCloudPlatform(MOCK_CAPITAL);
     }

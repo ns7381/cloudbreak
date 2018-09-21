@@ -7,6 +7,7 @@ import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.Entity;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
 
 public class CredentialV3Action {
@@ -71,11 +72,16 @@ public class CredentialV3Action {
         client = integrationTestContext.getContextParam(CloudbreakClient.CLOUDBREAK_CLIENT,
                 CloudbreakClient.class);
         Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
-        Log.log(" delete "
-                .concat(credentialEntity.getName())
-                .concat(" private credential. "));
+        Log.log(" delete %s private credential. ", credentialEntity.getName());
         client.getCloudbreakClient().credentialV3Endpoint()
                 .deleteInWorkspace(workspaceId, credentialEntity.getName());
+    }
+
+    public static CredentialEntity deleteV2(TestContext testContext, CredentialEntity entity, CloudbreakClient cloudbreakClient) {
+        Log.log("Delete %s credential. ", entity.getName());
+        cloudbreakClient.getCloudbreakClient().credentialV3Endpoint()
+                .deleteInWorkspace(testContext.workspaceId(), entity.getName());
+        return entity;
     }
 
     public static void createInGiven(IntegrationTestContext integrationTestContext, Entity entity) {

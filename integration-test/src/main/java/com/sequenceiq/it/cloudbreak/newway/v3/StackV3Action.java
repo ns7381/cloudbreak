@@ -16,7 +16,9 @@ import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.DatalakeCluster;
 import com.sequenceiq.it.cloudbreak.newway.Entity;
+import com.sequenceiq.it.cloudbreak.newway.Stack;
 import com.sequenceiq.it.cloudbreak.newway.StackEntity;
+import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
 
 public class StackV3Action {
@@ -81,6 +83,13 @@ public class StackV3Action {
         Log.log(" delete: " + stackEntity.getName());
         cloudbreakClient.getCloudbreakClient().stackV3Endpoint()
                 .deleteInWorkspace(workspaceId, stackEntity.getName(), forced, false);
+    }
+
+    public static Stack deleteV2(TestContext testContext, Stack entity, CloudbreakClient cloudbreakClient) {
+        Log.log(" delete: " + entity.getName());
+        cloudbreakClient.getCloudbreakClient().stackV3Endpoint()
+                .deleteInWorkspace(testContext.workspaceId(), entity.getName(), false, false);
+        return entity;
     }
 
     public static void deleteWithKerberos(IntegrationTestContext integrationTestContext, Entity entity) {
