@@ -33,9 +33,9 @@ public class TerminationSuccessTest extends AbstractIntegrationTest {
         sparkServer.initSparkService();
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
-        String imageCatalogAddress = sparkServer.startImageCatalog(sparkServer.getPort());
+        sparkServer.startImageCatalog();
         testContext.given();
-        testContext.given(ImageCatalog.class).withUrl(imageCatalogAddress)
+        testContext.given(ImageCatalog.class).withUrl(sparkServer.getImageCatalogUrl())
                 .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))

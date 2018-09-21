@@ -33,6 +33,8 @@ public class SparkServer {
 
     private int port;
 
+    private boolean initialized;
+
     @Value("${mock.server.address}")
     private String mockServerAddress;
 
@@ -74,18 +76,21 @@ public class SparkServer {
 
         callStack.clear();
         requestResponseMap.clear();
+        initialized = true;
     }
 
 
-    public String startImageCatalog(int port) {
-        String imageCatalogAddress = String.join("", "https://", hostname, ":", port + "", ITResponse.IMAGE_CATALOG);
+    public void startImageCatalog() {
         ImageCatalogServiceMock imageCatalogServiceMock = new ImageCatalogServiceMock(sparkService);
         imageCatalogServiceMock.mockImageCatalogResponse(cloudbreakServerRoot);
-        return imageCatalogAddress;
     }
 
     public String getEndpoint() {
         return "https://" + hostname + ":" + port;
+    }
+
+    public String getImageCatalogUrl(){
+        return String.join("", "https://", hostname, ":", port + "", ITResponse.IMAGE_CATALOG);
     }
 
     protected static File createTempFileFromClasspath(String file) {
@@ -110,6 +115,16 @@ public class SparkServer {
     public int getPort() {
         return port;
     }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void restart(){
+        stop();
+        sparkService.init();
+    }
+
 
     public void stop() {
         if (sparkService != null) {

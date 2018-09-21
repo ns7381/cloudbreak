@@ -11,6 +11,7 @@ import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.Entity;
 import com.sequenceiq.it.cloudbreak.newway.ImageCatalogEntity;
+import com.sequenceiq.it.cloudbreak.newway.log.Log;
 
 public class ImageCatalogV3Action {
 
@@ -102,6 +103,15 @@ public class ImageCatalogV3Action {
         Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
         cloudbreakClient.getCloudbreakClient().imageCatalogV3Endpoint()
                 .deleteInWorkspace(workspaceId, recipeEntity.getName());
+    }
+
+    public static void safeDelete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient cloudbreakClient){
+        try {
+            get(integrationTestContext, entity);
+            delete(integrationTestContext, entity, cloudbreakClient);
+        } catch(Exception e){
+            Log.log("ImageCatalog does not exist, can't delete.");
+        }
     }
 
     public static void delete(IntegrationTestContext integrationTestContext, Entity entity) {

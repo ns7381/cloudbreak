@@ -5,6 +5,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.mockserver.integration.ClientAndServer;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.target.ThreadLocalTargetSource;
 import org.springframework.context.annotation.Bean;
@@ -40,5 +41,31 @@ public class MockPoolConfiguration {
         proxyFactory.setTargetSource(sparkInstancePool());
         return proxyFactory;
     }
+
+
+    @Bean
+    @Scope(SCOPE_PROTOTYPE)
+    public ClientAndServer mockServer() {
+        //get random range of ports
+        int randomPort = ThreadLocalRandom.current().nextInt(8400, 8900 + 1);
+        return new ClientAndServer("localhost", randomPort);
+    }
+
+
+//    @Bean
+//    public ThreadLocalTargetSource mockServerInstancePool(){
+//        ThreadLocalTargetSource pool = new ThreadLocalTargetSource();
+//        pool.setTargetBeanName("mockServer");
+//        return pool;
+//    }
+//
+//    @Bean
+//    @Primary
+//    public ProxyFactoryBean pooledMockServerEntity(){
+//        ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
+//        proxyFactory.setTargetSource(mockServerInstancePool());
+//        return proxyFactory;
+//    }
+
 
 }

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.mockserver.integration.ClientAndServer;
-
 import com.sequenceiq.it.cloudbreak.newway.mock.MockModel;
 import com.sequenceiq.it.verification.Call;
 
@@ -29,8 +27,6 @@ public class SparkMockEntity extends Entity {
     private final java.util.Stack<Call> callStack = new java.util.Stack<Call>();
 
     private Service sparkService;
-
-    private ClientAndServer mockServer;
 
     public SparkMockEntity(){
 
