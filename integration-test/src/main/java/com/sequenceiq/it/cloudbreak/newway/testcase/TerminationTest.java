@@ -22,9 +22,9 @@ import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
 
-public class TerninationTest extends AbstractIntegrationTest {
+public class TerminationTest extends AbstractIntegrationTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TerninationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TerminationTest.class);
 
     @BeforeMethod
     public void beforeMethod(Object[] data) {
@@ -69,6 +69,6 @@ public class TerninationTest extends AbstractIntegrationTest {
                 .when(Stack.postV2())
                 .then(Stack::waitAndCheckClusterAndStackAvailabilityStatus)
                 .when(Stack.class, StackV3Action::deleteV2)
-                .then(Stack::waitAndCheckClusterAndStackAvailabilityStatus);
+                .then(Stack::waitAndCheckClusterDeleted);
     }
 }

@@ -2,6 +2,7 @@ package com.sequenceiq.it.cloudbreak.newway;
 
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndCheckClusterStatus;
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndCheckStackStatus;
+import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndCheckStatuses;
 import static com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util.waitAndExpectClusterFailure;
 import static java.util.Collections.emptyMap;
 import static org.testng.Assert.assertEquals;
@@ -224,9 +225,18 @@ public class Stack extends StackEntity {
         String stackName = stackResponse.getName();
         Long workspaceId = stackResponse.getWorkspace().getId();
         Assert.assertNotNull(stackResponse.getName());
-        Map<String, String> statuses = waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE");
-        statuses.putAll(waitAndCheckClusterStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "AVAILABLE"));
+        Map<String, String> statuses = waitAndCheckStatuses(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName,
+                Map.of("status", "AVAILABLE", "clusterStatus", "AVAILABLE"));
         testContext.addStatuses(statuses);
+        return stack;
+    }
+
+    public static Stack waitAndCheckClusterDeleted(TestContext testContext, Stack stack, CloudbreakClient cloudbreakClient) {
+        StackResponse stackResponse = stack.getResponse();
+        String stackName = stackResponse.getName();
+        Long workspaceId = stackResponse.getWorkspace().getId();
+        Assert.assertNotNull(stackResponse.getName());
+        waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "DELETE_COMPLETED");
         return stack;
     }
 
