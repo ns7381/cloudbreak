@@ -31,7 +31,7 @@ public class TerminationTest extends AbstractIntegrationTest {
         TestContext testContext = (TestContext) data[0];
         SparkServer sparkServer = (SparkServer) data[1];
         sparkServer.initSparkService();
-        configureImgCatalogMock();
+        imgCatalog.configureImgCatalogMock(mockServer, testParameter);
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
         testContext.given();

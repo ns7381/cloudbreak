@@ -1,12 +1,13 @@
 package com.sequenceiq.it.cloudbreak.newway.testcase;
 
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
+import static com.sequenceiq.it.cloudbreak.newway.Mock.CLOUDBREAK_SERVER_ROOT;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 
 import org.apache.commons.io.IOUtils;
 import org.mockserver.integration.ClientAndServer;
@@ -22,9 +23,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 
+import com.sequenceiq.cloudbreak.client.RestClientUtil;
+import com.sequenceiq.it.cloudbreak.mock.json.CBVersion;
 import com.sequenceiq.it.cloudbreak.newway.TestParameter;
 import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
+import com.sequenceiq.it.cloudbreak.newway.mock.ImageCatalogMockServerSetup;
 import com.sequenceiq.it.cloudbreak.newway.mock.MockPoolConfiguration;
 import com.sequenceiq.it.config.IntegrationTestConfiguration;
 import com.sequenceiq.it.spark.ITResponse;
@@ -35,10 +39,13 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
     @Inject
-    private TestParameter testParameter;
+    protected TestParameter testParameter;
 
     @Inject
     protected SparkServer sparkServer;
+
+    @Inject
+    protected ImageCatalogMockServerSetup imgCatalog;
 
     @Autowired
     protected ClientAndServer mockServer;
@@ -68,14 +75,14 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
         return String.join("", "https://localhost", ":", mockServer.getLocalPort() + "", ITResponse.IMAGE_CATALOG);
     }
 
-    public void configureImgCatalogMock(){
-        mockServer.when(
-                request()
-                        .withPath("/imagecatalog")
-        ).respond(response()
-                .withStatusCode(200)
-                .withBody(responseFromJsonFile("imagecatalog/catalog.json"))
-        );
+
+
+    public String patchCbVersion(String imgCatalog) {
+        Client client = RestClientUtil.get();
+        WebTarget target = client.target(testParameter.get(CLOUDBREAK_SERVER_ROOT) + "/info");
+        CBVersion cbVersion = target.request().get().readEntity(CBVersion.class);
+        String version = cbVersion.getApp().getVersion();
+        return imgCatalog.replace("CB_VERSION", cbVersion.getApp().getVersion());
     }
 
     public static String responseFromJsonFile(String path) {
