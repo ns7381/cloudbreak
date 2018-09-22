@@ -48,7 +48,8 @@ public class MockPoolConfiguration {
     public ClientAndServer mockServer() {
         //get random range of ports
         int randomPort = ThreadLocalRandom.current().nextInt(8400, 8900 + 1);
-        return new ClientAndServer("localhost", randomPort);
+        ClientAndServer server = ClientAndServer.startClientAndServer("localhost", randomPort);
+        return server;
     }
 
 

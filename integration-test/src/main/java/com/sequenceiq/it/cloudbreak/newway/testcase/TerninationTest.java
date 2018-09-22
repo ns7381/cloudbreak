@@ -31,11 +31,11 @@ public class TerninationTest extends AbstractIntegrationTest {
         TestContext testContext = (TestContext) data[0];
         SparkServer sparkServer = (SparkServer) data[1];
         sparkServer.initSparkService();
+        configureImgCatalogMock();
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
-        sparkServer.startImageCatalog();
         testContext.given();
-        testContext.given(ImageCatalog.class).withUrl(sparkServer.getImageCatalogUrl())
+        testContext.given(ImageCatalog.class).withUrl(getImgCatalogUrl())
                 .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
