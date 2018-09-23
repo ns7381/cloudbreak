@@ -74,6 +74,9 @@ public class AzureCloudProvider extends CloudProviderHelper {
                 case "WASB":
                     resourceHelper = new AzureWasbResourceHelper(testParameter, "-azure-wasb");
                     break;
+                case "ABFS":
+                    resourceHelper = new AzureAbfsResourceHelper(testParameter, "-azure-abfs");
+                    break;
                 default:
                     resourceHelper = new AzureAdlsResourceHelper(testParameter, "-azure-adls");
                     break;
@@ -260,6 +263,12 @@ public class AzureCloudProvider extends CloudProviderHelper {
                 .withLdapConfigName(resourceHelper.getLdapConfigName());
     }
 
+
+    public Cluster aValidClusterWithFs() {
+        return Cluster.request()
+                .withAmbariRequest(ambariRequestWithBlueprintName(getDatalakeBlueprintName()))
+                .withCloudStorage(resourceHelper.getCloudStorageRequestForDatalake());
+    }
     public Map<String, Object> azureCredentialDetails() {
         Map<String, Object> map = new HashMap<>();
         map.put(ACCESS_KEY_PARAM_KEY, getTestParameter().get(CREDENTIAL_ACCESS_KEY_ENV_KEY));

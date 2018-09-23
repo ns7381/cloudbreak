@@ -1,0 +1,21 @@
+name: Cluster_tests
+parallel: tests
+threadCount: 1
+parameters:
+  azureCredentialName: autotesting-azure-abfs
+tests:
+- name: "azure cluster test with abfs"
+  preserveOrder: true
+  parameters:
+    clusterName: azure-abfs
+    provider: azure
+    datalakeBlueprintName: "EDW-ETL: Apache Hive, Apache Spark 2"
+    image: hdp
+    instancegroupName: worker
+    cloudStorageType: abfs
+  classes:
+  - name: com.sequenceiq.it.cloudbreak.AzureAbfsClusterTest
+    includedMethods:
+    - testCreateClusterWithAbfs
+    parameters:
+      cloudProvider: azure
