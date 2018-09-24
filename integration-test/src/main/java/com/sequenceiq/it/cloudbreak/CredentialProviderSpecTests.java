@@ -1,14 +1,5 @@
 package com.sequenceiq.it.cloudbreak;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ForbiddenException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.Test;
-
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.Credential;
@@ -16,10 +7,23 @@ import com.sequenceiq.it.cloudbreak.newway.cloud.AwsCloudProvider;
 import com.sequenceiq.it.cloudbreak.newway.cloud.AzureCloudProvider;
 import com.sequenceiq.it.cloudbreak.newway.cloud.GcpCloudProvider;
 import com.sequenceiq.it.cloudbreak.newway.cloud.OpenstackCloudProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.Test;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import java.util.Map;
 
 public class CredentialProviderSpecTests extends CloudbreakTest {
 
     private static final String VALID_AWSKEY_CRED_NAME = "valid-keybased-credential";
+
+    private static final String VALID_AWSROLE_CRED_NAME = "valid-rolebased-credential";
 
     private static final String VALID_OSV3_CRED_NAME = "valid-v3-credential";
 
@@ -61,7 +65,7 @@ public class CredentialProviderSpecTests extends CloudbreakTest {
 
     @AfterTest
     public void cleanUp() throws Exception {
-        String[] nameArray = {VALID_AWSKEY_CRED_NAME, VALID_OSV3_CRED_NAME};
+        String[] nameArray = {VALID_AWSKEY_CRED_NAME, VALID_OSV3_CRED_NAME, VALID_AWSROLE_CRED_NAME };
 
         for (String aNameArray : nameArray) {
             LOGGER.info("Delete credential: \'{}\'", aNameArray.toLowerCase().trim());
@@ -70,10 +74,15 @@ public class CredentialProviderSpecTests extends CloudbreakTest {
                 given(Credential.request()
                         .withName(aNameArray));
                 when(Credential.delete());
-            } catch (ForbiddenException e) {
-                String exceptionMessage = e.getResponse().readEntity(String.class);
-                String errorMessage = exceptionMessage.substring(exceptionMessage.lastIndexOf(':') + 1);
-                LOGGER.info("ForbiddenException message ::: " + errorMessage);
+            } catch (ForbiddenException forbiddenExp) {
+                try (Response response = forbiddenExp.getResponse()) {
+                    String exceptionMessage = response.readEntity(String.class);
+                    String errorMessage = exceptionMessage.substring(exceptionMessage.lastIndexOf(':') + 1);
+
+                    LOGGER.info("ForbiddenException message ::: " + errorMessage);
+                } catch (WebApplicationException appExp) {
+                    LOGGER.info("Cloudbreak App. exception message ::: " + appExp.getMessage());
+                }
             }
         }
     }
@@ -161,6 +170,63 @@ public class CredentialProviderSpecTests extends CloudbreakTest {
                 .withCloudPlatform(AwsCloudProvider.AWS_CAPITAL)
                 .withParameters(awsCloudProvider.awsCredentialDetailsInvalidArn()), "AWS credential with not valid Role ARN request.");
         when(Credential.post(), "AWS credential with not valid Role ARN request has been posted.");
+    }
+
+    @Test(groups = { "credentials", "aws" })
+    public void testModifyAWSRoleCredentialToKey() throws Exception {
+        AwsCloudProvider provider = new AwsCloudProvider(getTestParameter());
+
+        given(CloudbreakClient.isCreated());
+        given(provider.aValidCredential()
+                .withName(VALID_AWSROLE_CRED_NAME), VALID_AWSROLE_CRED_NAME + " credential is created.");
+        given(Credential.request()
+                .withName(VALID_AWSROLE_CRED_NAME)
+                .withParameters(provider.awsCredentialDetailsKey())
+                .withCloudPlatform(provider.getPlatform()), VALID_AWSROLE_CRED_NAME + " credential Key Based modification is requested.");
+        when(Credential.put(), VALID_AWSROLE_CRED_NAME + " credential has been modified.");
+        then(Credential.assertThis(
+                (credential, t) -> {
+                    Map<String, Object> parameterMappings = credential.getResponse().getParameters();
+
+                    for (Map.Entry<String, Object> parameterMapping : parameterMappings.entrySet()) {
+                        LOGGER.debug("Parameter is ::: {}", parameterMapping.getKey());
+                        LOGGER.debug("Value is ::: {}", parameterMapping.getValue());
+                        if (parameterMapping.getKey().equalsIgnoreCase("selector")) {
+                            Assert.assertEquals(parameterMapping.getValue(), "key-based",
+                                    "Key Based should be present as Selector in response!");
+                        }
+                    }
+                }), "Credential Parameter Mapping should be part of the response."
+        );
+    }
+
+    @Test(groups = { "credentials", "aws" })
+    public void testModifyAWSKeyCredentialToRole() throws Exception {
+        AwsCloudProvider provider = new AwsCloudProvider(getTestParameter());
+
+        given(CloudbreakClient.isCreated());
+        given(provider.aValidCredential()
+                .withName(VALID_AWSKEY_CRED_NAME)
+                .withParameters(provider.awsCredentialDetailsKey()), VALID_AWSKEY_CRED_NAME + " credential is created.");
+        given(Credential.request()
+                .withName(VALID_AWSKEY_CRED_NAME)
+                .withParameters(provider.awsCredentialDetailsArn())
+                .withCloudPlatform(provider.getPlatform()), VALID_AWSKEY_CRED_NAME + " credential Role Based modification is requested.");
+        when(Credential.put(), VALID_AWSKEY_CRED_NAME + " credential has been modified.");
+        then(Credential.assertThis(
+                (credential, t) -> {
+                    Map<String, Object> parameterMappings = credential.getResponse().getParameters();
+
+                    for (Map.Entry<String, Object> parameterMapping : parameterMappings.entrySet()) {
+                        LOGGER.debug("Parameter is ::: {}", parameterMapping.getKey());
+                        LOGGER.debug("Value is ::: {}", parameterMapping.getValue());
+                        if (parameterMapping.getKey().equalsIgnoreCase("selector")) {
+                            Assert.assertEquals(parameterMapping.getValue(), "role-based",
+                                    "Role Based should be present as Selector in response!");
+                        }
+                    }
+                }), "Credential Parameter Mapping should be part of the response."
+        );
     }
 
     @Test(expectedExceptions = BadRequestException.class, groups = { "credentials", "azure" })

@@ -1,10 +1,10 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class Credential extends CredentialEntity {
 
@@ -42,6 +42,14 @@ public class Credential extends CredentialEntity {
 
     public static Action<Credential> post() {
         return post(CREDENTIAL);
+    }
+
+    public static Action<Credential> put(String key) {
+        return new Action<>(getTestContextCredential(key), CredentialV3Action::put);
+    }
+
+    public static Action<Credential> put() {
+        return put(CREDENTIAL);
     }
 
     public static Action<Credential> get(String key) {

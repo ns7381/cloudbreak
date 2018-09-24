@@ -1,13 +1,13 @@
 package com.sequenceiq.it.cloudbreak.newway.v3;
 
-import java.io.IOException;
-
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
 import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.Entity;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
+
+import java.io.IOException;
 
 public class CredentialV3Action {
     private CredentialV3Action() {
@@ -26,6 +26,21 @@ public class CredentialV3Action {
                 client.getCloudbreakClient()
                         .credentialV3Endpoint()
                         .createInWorkspace(workspaceId, credentialEntity.getRequest()));
+    }
+
+    public static void put(IntegrationTestContext integrationTestContext, Entity entity) {
+        CredentialEntity credentialEntity = (CredentialEntity) entity;
+        CloudbreakClient client;
+        client = integrationTestContext.getContextParam(CloudbreakClient.CLOUDBREAK_CLIENT,
+                CloudbreakClient.class);
+        Long workspaceId = integrationTestContext.getContextParam(CloudbreakTest.WORKSPACE_ID, Long.class);
+        Log.log(" put "
+                .concat(credentialEntity.getName())
+                .concat(" private credential. "));
+        credentialEntity.setResponse(
+                client.getCloudbreakClient()
+                        .credentialV3Endpoint()
+                        .putInWorkspace(workspaceId, credentialEntity.getRequest()));
     }
 
     public static void get(IntegrationTestContext integrationTestContext, Entity entity) throws IOException {
