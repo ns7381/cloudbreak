@@ -67,8 +67,8 @@ dependencies {
     exclude group: 'commons-logging'
   }
 
-  compile group: 'org.mock-server', name: 'mockserver-netty', version: '5.4.1'
-  compile group: 'org.mock-server', name: 'mockserver-client-java', version: '5.4.1'
+// https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
+  compile group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.19.0'
   compile group: 'org.apache.commons', name: 'commons-pool2', version: '2.6.0'
 
   compile group: 'com.google.code.gson',          name: 'gson',                           version: '2.6.2'

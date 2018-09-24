@@ -1,8 +1,10 @@
 package com.sequenceiq.it.cloudbreak.newway.mock;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.sequenceiq.it.cloudbreak.newway.Mock.CLOUDBREAK_SERVER_ROOT;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +13,11 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
 import org.apache.commons.io.IOUtils;
-import org.mockserver.integration.ClientAndServer;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.sequenceiq.cloudbreak.client.RestClientUtil;
 import com.sequenceiq.it.cloudbreak.mock.json.CBVersion;
 import com.sequenceiq.it.cloudbreak.newway.TestParameter;
@@ -22,15 +26,20 @@ import com.sequenceiq.it.spark.ITResponse;
 @Service
 public class ImageCatalogMockServerSetup {
 
-    public void configureImgCatalogMock(ClientAndServer mockServer, TestParameter testparams) {
+    @Autowired
+    private WireMockServer mockServer;
+
+    public void configureImgCatalogMock(TestParameter testparams) {
         String jsonCatalogResponse = responseFromJsonFile("imagecatalog/catalog.json");
         String response = patchCbVersion(jsonCatalogResponse, testparams);
-        mockServer
-                .when(request().withPath("/imagecatalog"))
-                .respond(response()
-                .withStatusCode(200)
-                .withBody(response)
-        );
+        mockServer.stubFor(get(urlEqualTo("/imagecatalog"))
+                    .willReturn(aResponse().withStatus(200)
+                    .withBody(response)));
+    }
+
+
+    public String getImgCatalogUrl(){
+        return String.join("", "https://localhost", ":", mockServer.httpsPort() + "", ITResponse.IMAGE_CATALOG);
     }
 
     public String patchCbVersion(String catalogJson, TestParameter testParameter) {

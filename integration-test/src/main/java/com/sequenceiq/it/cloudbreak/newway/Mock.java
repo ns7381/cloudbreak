@@ -101,7 +101,7 @@ public class Mock extends SparkMockEntity {
         }
     }
 
-    protected static File createTempFileFromClasspath(String file) {
+    public static File createTempFileFromClasspath(String file) {
         try {
             InputStream sshPemInputStream = new ClassPathResource(file).getInputStream();
             File tempKeystoreFile = File.createTempFile(file, ".tmp");

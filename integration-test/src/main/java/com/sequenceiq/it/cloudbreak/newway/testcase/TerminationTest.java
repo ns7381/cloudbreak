@@ -31,11 +31,11 @@ public class TerminationTest extends AbstractIntegrationTest {
         TestContext testContext = (TestContext) data[0];
         SparkServer sparkServer = (SparkServer) data[1];
         sparkServer.initSparkService();
-        imgCatalog.configureImgCatalogMock(mockServer, testParameter);
+        imgCatalog.configureImgCatalogMock(testParameter);
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
         testContext.given();
-        testContext.given(ImageCatalog.class).withUrl(getImgCatalogUrl())
+        testContext.given(ImageCatalog.class).withUrl(imgCatalog.getImgCatalogUrl())
                 .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
