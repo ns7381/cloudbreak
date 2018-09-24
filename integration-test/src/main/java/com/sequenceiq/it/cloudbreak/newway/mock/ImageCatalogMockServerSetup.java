@@ -39,7 +39,7 @@ public class ImageCatalogMockServerSetup {
 
 
     public String getImgCatalogUrl(){
-        return String.join("", "https://localhost", ":", mockServer.httpsPort() + "", ITResponse.IMAGE_CATALOG);
+        return mockServer.baseUrl() + ITResponse.IMAGE_CATALOG;
     }
 
     public String patchCbVersion(String catalogJson, TestParameter testParameter) {
