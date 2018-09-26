@@ -1,10 +1,14 @@
 package com.sequenceiq.it.cloudbreak.newway.testcase;
 
 
+import static com.sequenceiq.it.cloudbreak.newway.mock.model.AmbariMock.CLUSTERS_CLUSTER_REQUESTS_REQUEST;
+import static com.sequenceiq.it.spark.ITResponse.AMBARI_API_ROOT;
+
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,6 +25,9 @@ import com.sequenceiq.it.cloudbreak.newway.entity.ClusterEntity;
 import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
+import com.sequenceiq.it.spark.StatefulRoute;
+
+import spark.Route;
 
 public class TerminationTest extends AbstractIntegrationTest {
 
@@ -34,6 +41,8 @@ public class TerminationTest extends AbstractIntegrationTest {
         imgCatalog.configureImgCatalogMock(testParameter);
         DefaultModel model = new DefaultModel();
         model.startModel(sparkServer.getSparkService(), "localhost");
+
+        modifySparkMock(model);
         testContext.given();
         testContext.given(ImageCatalog.class).withUrl(imgCatalog.getImgCatalogUrl())
                 .when(new ImageCatalogCreateIfNotExistsAction())
@@ -41,6 +50,23 @@ public class TerminationTest extends AbstractIntegrationTest {
                 .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
                 .when(new CredentialCreateAction());
 
+    }
+
+    private void modifySparkMock(DefaultModel model) {
+        StatefulRoute customResponse = (request, response, defaultModel) -> {
+            response.status(404);
+            response.body("{}");
+            return response;
+        };
+
+        Route customResponse2 = (request, response) -> {
+            response.status(404);
+            return response;
+        };
+
+        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST, customResponse2);
+        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST, customResponse2);
+        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST, customResponse2);
     }
 
     @AfterMethod(alwaysRun = true)

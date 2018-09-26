@@ -47,6 +47,10 @@ public class DefaultModel extends MockModel {
         saltMock.addSaltMappings();
     }
 
+    public AmbariMock getAmbariMock() {
+        return ambariMock;
+    }
+
     public String getClusterName() {
         return clusterName;
     }
