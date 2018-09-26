@@ -47,17 +47,17 @@ public class SparkServer {
 
     private final java.util.Stack<Call> callStack = new java.util.Stack<Call>();
 
+    public SparkServer(String hostname, int port) {
+        this.hostname = hostname;
+        this.port = port;
+    }
+
     public Map<Call, Response> getRequestResponseMap() {
         return requestResponseMap;
     }
 
     public Stack<Call> getCallStack() {
         return callStack;
-    }
-
-    public SparkServer(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
     }
 
     public void initSparkService() {
@@ -79,7 +79,6 @@ public class SparkServer {
         initialized = true;
     }
 
-
     public void startImageCatalog() {
         ImageCatalogServiceMock imageCatalogServiceMock = new ImageCatalogServiceMock(sparkService);
         imageCatalogServiceMock.mockImageCatalogResponse(cloudbreakServerRoot);
@@ -89,7 +88,7 @@ public class SparkServer {
         return "https://" + hostname + ":" + port;
     }
 
-    public String getImageCatalogUrl(){
+    public String getImageCatalogUrl() {
         return String.join("", "https://", hostname, ":", port + "", ITResponse.IMAGE_CATALOG);
     }
 
@@ -120,11 +119,10 @@ public class SparkServer {
         return initialized;
     }
 
-    public void restart(){
+    public void restart() {
         stop();
         sparkService.init();
     }
-
 
     public void stop() {
         if (sparkService != null) {

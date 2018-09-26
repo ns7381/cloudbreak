@@ -92,7 +92,6 @@ public class Stack extends StackEntity {
         return stack;
     }
 
-
     public static ActionV2<Stack> postV2() {
         return new StackPostAction();
     }

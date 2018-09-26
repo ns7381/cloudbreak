@@ -79,11 +79,11 @@ public class CredentialV3Action {
                 .deleteInWorkspace(workspaceId, credentialEntity.getName());
     }
 
-    public static void safeDelete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient client){
-        try{
+    public static void safeDelete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient client) {
+        try {
             get(integrationTestContext, entity, client);
             delete(integrationTestContext, entity, client);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.log("Could not delete credential, probably already deleted.");
         }
     }

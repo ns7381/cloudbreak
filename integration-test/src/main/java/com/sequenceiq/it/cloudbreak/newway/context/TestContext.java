@@ -54,7 +54,6 @@ public class TestContext {
         return cloudbreakClient;
     }
 
-
     public <T extends CloudbreakEntity<T>> T when(Class<T> entityClass, ActionV2<T> action) {
         T entity = (T) resources.get(entityClass.getSimpleName());
         if (entity == null) {
@@ -67,7 +66,6 @@ public class TestContext {
     public <T extends CloudbreakEntity<T>> T when(T entity, ActionV2<T> action) {
         return when(entity, testParameter.get(CloudbreakTest.USER), action);
     }
-
 
     public <T extends CloudbreakEntity<T>> T then(T entity, String who, AssertionV2<T> assertion) {
         try {

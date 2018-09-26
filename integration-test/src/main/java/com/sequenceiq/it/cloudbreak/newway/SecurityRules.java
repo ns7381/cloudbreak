@@ -9,19 +9,19 @@ import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 @Prototype
 public class SecurityRules extends SecurityRulesEntity {
 
+    SecurityRules() {
+    }
+
+    public SecurityRules(TestContext testContext) {
+        super(testContext);
+    }
+
     static Function<IntegrationTestContext, SecurityRules> getTestContext(String key) {
         return testContext -> testContext.getContextParam(key, SecurityRules.class);
     }
 
     static Function<IntegrationTestContext, SecurityRules> getNew() {
         return testContext -> new SecurityRules();
-    }
-
-    SecurityRules() {
-    }
-
-    public SecurityRules(TestContext testContext) {
-        super(testContext);
     }
 
     public static SecurityRules request() {

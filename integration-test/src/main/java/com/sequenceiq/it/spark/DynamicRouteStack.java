@@ -14,7 +14,9 @@ import spark.Service;
 public class DynamicRouteStack {
 
     private Map<RouteKey, CustomizeableDynamicRoute> mockResponders = new HashMap<>();
+
     private Service service;
+
     private DefaultModel model;
 
     public DynamicRouteStack(Service service, DefaultModel model) {
@@ -24,7 +26,7 @@ public class DynamicRouteStack {
 
     public Route overrideResponseByUrlWithSimple(HttpMethod method, String url, Route responseHandler) {
         RouteKey key = new RouteKey(method, url);
-        if(mockResponders.get(key) == null) {
+        if (mockResponders.get(key) == null) {
             CustomizeableDynamicRoute route = new CustomizeableDynamicRoute(responseHandler);
             mockResponders.put(key, route);
             addToSpark(method, url, route);
@@ -36,7 +38,7 @@ public class DynamicRouteStack {
 
     public Route overrideResponseByUrlWithStateful(HttpMethod method, String url, StatefulRoute responseHandler) {
         RouteKey key = new RouteKey(method, url);
-        if(mockResponders.get(key) == null) {
+        if (mockResponders.get(key) == null) {
             CustomizeableDynamicRoute route = new CustomizeableDynamicRoute(responseHandler, model);
             mockResponders.put(key, route);
             addToSpark(method, url, route);
@@ -46,7 +48,7 @@ public class DynamicRouteStack {
         return modifiableRoute;
     }
 
-    private void addToSpark(HttpMethod method, String url, Route route){
+    private void addToSpark(HttpMethod method, String url, Route route) {
         switch (method) {
             case GET:
                 service.get(url, route);
@@ -66,25 +68,31 @@ public class DynamicRouteStack {
             case OPTIONS:
                 service.options(url, route);
                 break;
+            default: throw new UnsupportedOperationException();
         }
-
     }
+
     private class RouteKey {
+
         private HttpMethod method;
+
         private String url;
 
-        public RouteKey(HttpMethod method, String url) {
+        RouteKey(HttpMethod method, String url) {
             this.method = method;
             this.url = url;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             RouteKey that = (RouteKey) o;
-            return method == that.method &&
-                    Objects.equals(url, that.url);
+            return method == that.method && Objects.equals(url, that.url);
         }
 
         @Override

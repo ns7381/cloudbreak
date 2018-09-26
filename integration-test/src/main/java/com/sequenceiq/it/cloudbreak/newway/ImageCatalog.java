@@ -14,6 +14,13 @@ import com.sequenceiq.it.cloudbreak.newway.v3.ImageCatalogV3Action;
 @Prototype
 public class ImageCatalog extends ImageCatalogEntity {
 
+    public ImageCatalog(TestContext testContext) {
+        super(new ImageCatalogRequest(), testContext);
+    }
+
+    public ImageCatalog() {
+    }
+
     static Function<IntegrationTestContext, ImageCatalog> getTestContext(String key) {
         return testContext -> testContext.getContextParam(key, ImageCatalog.class);
     }
@@ -24,13 +31,6 @@ public class ImageCatalog extends ImageCatalogEntity {
 
     public static ImageCatalog request() {
         return new ImageCatalog();
-    }
-
-    public ImageCatalog(TestContext testContext) {
-        super(new ImageCatalogRequest(), testContext);
-    }
-
-    public ImageCatalog() {
     }
 
     public ImageCatalog valid() {

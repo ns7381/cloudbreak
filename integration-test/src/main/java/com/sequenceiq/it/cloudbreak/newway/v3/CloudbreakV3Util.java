@@ -102,7 +102,8 @@ public class CloudbreakV3Util {
         return "";
     }
 
-    public static Map<String, String> waitAndCheckStatuses(CloudbreakClient cloudbreakClient, Long workspaceId, String stackName, Map<String, String> desiredStatuses) {
+    public static Map<String, String> waitAndCheckStatuses(CloudbreakClient cloudbreakClient, Long workspaceId, String stackName,
+            Map<String, String> desiredStatuses) {
         Map<String, String> ret = new HashMap<>();
         for (int i = 0; i < 3; i++) {
             WaitResult waitResult = waitForStatuses(cloudbreakClient, workspaceId, stackName, desiredStatuses);

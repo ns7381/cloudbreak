@@ -28,7 +28,7 @@ public class SparkMockEntity extends Entity {
 
     private Service sparkService;
 
-    public SparkMockEntity(){
+    public SparkMockEntity() {
 
     }
 

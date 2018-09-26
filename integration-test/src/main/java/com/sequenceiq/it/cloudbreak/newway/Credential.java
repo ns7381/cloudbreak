@@ -13,6 +13,13 @@ import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 @Prototype
 public class Credential extends CredentialEntity {
 
+    Credential() {
+    }
+
+    public Credential(TestContext testContext) {
+        super(testContext);
+    }
+
     public static Function<IntegrationTestContext, Credential> getTestContextCredential(String key) {
         return testContext -> testContext.getContextParam(key, Credential.class);
     }
@@ -23,13 +30,6 @@ public class Credential extends CredentialEntity {
 
     static Function<IntegrationTestContext, Credential> getNew() {
         return testContext -> new Credential();
-    }
-
-    public Credential(TestContext testContext) {
-        super(testContext);
-    }
-
-    Credential() {
     }
 
     public static Credential request() {

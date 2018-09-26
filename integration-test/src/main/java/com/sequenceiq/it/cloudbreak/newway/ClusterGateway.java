@@ -13,7 +13,6 @@ public class ClusterGateway extends AbstractCloudbreakEntity<GatewayJson, Gatewa
 
     public static final String GATEWAY_REQUEST = "GATEWAY_REQUEST";
 
-
     ClusterGateway(String newId) {
         super(newId);
         setRequest(new GatewayJson());

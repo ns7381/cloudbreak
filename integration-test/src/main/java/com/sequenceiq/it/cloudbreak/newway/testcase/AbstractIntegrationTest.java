@@ -28,16 +28,16 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
     @Inject
-    protected TestParameter testParameter;
+    private TestParameter testParameter;
 
     @Inject
-    protected SparkServer sparkServer;
+    private SparkServer sparkServer;
 
     @Inject
-    protected ImageCatalogMockServerSetup imgCatalog;
+    private ImageCatalogMockServerSetup imgCatalog;
 
     @Autowired
-    protected WireMockServer mockServer;
+    private WireMockServer mockServer;
 
     @BeforeSuite
     public void beforeSuite(ITestContext testngContext) {
@@ -45,13 +45,29 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     }
 
     @BeforeClass
-    public void createSharedObjects()  {
+    public void createSharedObjects() {
 
     }
 
     @AfterClass(alwaysRun = true)
     public void cleanSharedObjects() {
 
+    }
+
+    public TestParameter getTestParameter() {
+        return testParameter;
+    }
+
+    public SparkServer getSparkServer() {
+        return sparkServer;
+    }
+
+    public ImageCatalogMockServerSetup getImgCatalog() {
+        return imgCatalog;
+    }
+
+    public WireMockServer getMockServer() {
+        return mockServer;
     }
 
     @DataProvider

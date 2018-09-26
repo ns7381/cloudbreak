@@ -105,11 +105,11 @@ public class ImageCatalogV3Action {
                 .deleteInWorkspace(workspaceId, recipeEntity.getName());
     }
 
-    public static void safeDelete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient cloudbreakClient){
+    public static void safeDelete(IntegrationTestContext integrationTestContext, Entity entity, CloudbreakClient cloudbreakClient) {
         try {
             get(integrationTestContext, entity);
             delete(integrationTestContext, entity, cloudbreakClient);
-        } catch(Exception e){
+        } catch (Exception e) {
             Log.log("ImageCatalog does not exist, can't delete.");
         }
     }
@@ -132,6 +132,7 @@ public class ImageCatalogV3Action {
                         .imageCatalogV3Endpoint().putSetDefaultByNameInWorkspace(workspaceId, imageCatalogEntity.getName()));
         logJSON("Imagecatalog get response: ", imageCatalogEntity.getResponse());
     }
+
     public static void putSetDefaultByName(IntegrationTestContext integrationTestContext, Entity entity) throws Exception {
         ImageCatalogEntity imageCatalogEntity = (ImageCatalogEntity) entity;
         CloudbreakClient client;

@@ -7,6 +7,10 @@ import com.sequenceiq.it.cloudbreak.newway.log.Log;
 
 public class Gherkin {
 
+    private Gherkin() {
+        //util
+    }
+
     public static <T extends CloudbreakEntity<T>> T given(Class<T> clss) {
         Log.log("Given " + clss.getSimpleName());
         CloudbreakEntity<T> bean = ApplicationContextProvider.getBean(clss);

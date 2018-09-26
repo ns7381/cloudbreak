@@ -33,12 +33,11 @@ public class ImageCatalogMockServerSetup {
         String jsonCatalogResponse = responseFromJsonFile("imagecatalog/catalog.json");
         String response = patchCbVersion(jsonCatalogResponse, testparams);
         mockServer.stubFor(get(urlEqualTo("/imagecatalog"))
-                    .willReturn(aResponse().withStatus(200)
-                    .withBody(response)));
+                .willReturn(aResponse().withStatus(200)
+                        .withBody(response)));
     }
 
-
-    public String getImgCatalogUrl(){
+    public String getImgCatalogUrl() {
         return mockServer.baseUrl() + ITResponse.IMAGE_CATALOG;
     }
 

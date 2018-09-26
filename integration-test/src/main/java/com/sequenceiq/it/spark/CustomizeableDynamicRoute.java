@@ -48,23 +48,23 @@ public class CustomizeableDynamicRoute implements Route {
         }
     }
 
-    private Route getSafeSimple(){
-        if(simpleRouteImplementation.size() > 1){
+    private Route getSafeSimple() {
+        if (simpleRouteImplementation.size() > 1) {
             return simpleRouteImplementation.pop();
-        } else{
+        } else {
             return simpleRouteImplementation.peek();
         }
     }
 
     private StatefulRoute getSafeStateful() {
-        if(routeImplementation.size() > 1){
+        if (routeImplementation.size() > 1) {
             return routeImplementation.pop();
-        } else{
+        } else {
             return routeImplementation.peek();
         }
     }
 
-    enum Mode{
+    enum Mode {
         SIMPLE,
         STATEFUL
     }

@@ -133,7 +133,7 @@ public class StackPostAction implements ActionV2<Stack> {
                 params.put(SUBNET_ID_KEY, subnetId);
                 params.put(NETWORK_ID_KEY, networkId);
                 network.setParameters(params);
-                checkOldEntityExists(entity.getRequest().getNetwork() );
+                checkOldEntityExists(entity.getRequest().getNetwork());
                 entity.getRequest().setNetwork(network);
             }
             entity.getRequest().getNetwork().setSubnetCIDR(null);

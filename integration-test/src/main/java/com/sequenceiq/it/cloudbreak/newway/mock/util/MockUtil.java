@@ -8,6 +8,10 @@ import com.sequenceiq.it.cloudbreak.mock.MockInstanceUtil;
 
 public class MockUtil {
 
+    private MockUtil() {
+
+    }
+
     public static Map<String, CloudVmMetaDataStatus> generateInstances(String mockServer, int sshPort, int instanceNumber) {
         Map<String, CloudVmMetaDataStatus> instanceMap = new HashMap<>();
         MockInstanceUtil mockInstanceUtil = new MockInstanceUtil(mockServer, sshPort);

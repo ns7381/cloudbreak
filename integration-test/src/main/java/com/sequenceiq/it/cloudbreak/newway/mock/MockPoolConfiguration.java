@@ -29,9 +29,8 @@ public class MockPoolConfiguration {
         return new SparkServer("localhost", randomPort);
     }
 
-
     @Bean
-    public ThreadLocalTargetSource sparkInstancePool(){
+    public ThreadLocalTargetSource sparkInstancePool() {
         ThreadLocalTargetSource pool = new ThreadLocalTargetSource();
         pool.setTargetBeanName("sparkMockEntity");
         return pool;
@@ -39,15 +38,13 @@ public class MockPoolConfiguration {
 
     @Bean
     @Primary
-    public ProxyFactoryBean pooledSparkEntity(){
+    public ProxyFactoryBean pooledSparkEntity() {
         ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
         proxyFactory.setTargetSource(sparkInstancePool());
         return proxyFactory;
     }
 
-
     @Bean
-//    @Scope(SCOPE_PROTOTYPE)
     public WireMockServer mockServer() {
         //get random range of ports
         int randomPort = ThreadLocalRandom.current().nextInt(8400, 8900 + 1);
@@ -56,22 +53,4 @@ public class MockPoolConfiguration {
         server.start();
         return server;
     }
-
-
-//    @Bean
-//    public ThreadLocalTargetSource mockServerInstancePool(){
-//        ThreadLocalTargetSource pool = new ThreadLocalTargetSource();
-//        pool.setTargetBeanName("mockServer");
-//        return pool;
-//    }
-//
-//    @Bean
-//    @Primary
-//    public ProxyFactoryBean pooledMockServerEntity(){
-//        ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
-//        proxyFactory.setTargetSource(mockServerInstancePool());
-//        return proxyFactory;
-//    }
-
-
 }

@@ -34,7 +34,9 @@ import com.sequenceiq.it.util.HostNameUtil;
 import spark.Service;
 
 public class AmbariMock extends AbstractModelMock {
+
     public static final String CLUSTERS_CLUSTER = "/clusters/:cluster";
+
     public static final String ROOT_CLUSTERS_CLUSTER = AMBARI_API_ROOT + CLUSTERS_CLUSTER;
 
     public static final String CLUSTERS_CLUSTER_NAME_CONFIGURATIONS_SERVICE_CONFIG_VERSIONS = ROOT_CLUSTERS_CLUSTER + "/configurations/service_config_versions";
@@ -132,11 +134,12 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmabriVersionDefinitions(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,AMBARI_API_ROOT + "/version_definitions", new AmbariVersionDefinitionResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + "/version_definitions", new AmbariVersionDefinitionResponse());
     }
 
     private void getAmbariClusterHosts(Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,AMBARI_API_ROOT + "/clusters/:cluster/hosts", new AmbariCategorizedHostComponentStateResponse(instanceMap));
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + "/clusters/:cluster/hosts",
+                new AmbariCategorizedHostComponentStateResponse(instanceMap));
     }
 
     private void getAmbariClusterHosts2(Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
@@ -144,22 +147,23 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmbariClusterHosts(Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService, String state) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,AMBARI_API_ROOT + "/clusters/:cluster/hosts", new AmbariClustersHostsResponseW(instanceMap, state));
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + "/clusters/:cluster/hosts",
+                new AmbariClustersHostsResponseW(instanceMap, state));
     }
 
     private void getAmbariHosts(Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithStateful(HttpMethod.GET,AMBARI_API_ROOT + "/hosts", new AmbariHostsResponseV2());
+        dynamicRouteStack.overrideResponseByUrlWithStateful(HttpMethod.GET, AMBARI_API_ROOT + "/hosts", new AmbariHostsResponseV2());
     }
 
     private void getAmbariClusters(String clusterName, Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,AMBARI_API_ROOT + "/clusters", (req, resp) -> {
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + "/clusters", (req, resp) -> {
             ITResponse itResp = getDefaultModel().isClusterCreated() ? new AmbariClusterResponse(instanceMap, clusterName) : new EmptyAmbariClusterResponse();
             return itResp.handle(req, resp);
         });
     }
 
     private void getAmbariClusterServicesComponentsNamenode(Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,CLUSTERS_CLUSTER_SERVICES_HDFS_COMPONENTS_NAMENODE, (request, response) -> {
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, CLUSTERS_CLUSTER_SERVICES_HDFS_COMPONENTS_NAMENODE, (request, response) -> {
             response.type("text/plain");
             ObjectNode rootNode = JsonNodeFactory.instance.objectNode();
             ObjectNode nameNode = rootNode.putObject("metrics").putObject("dfs").putObject("namenode");
@@ -179,7 +183,7 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmbariClusterHostStatus(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,CLUSTERS_CLUSTER_HOSTS_INTERNALHOSTNAME, (request, response) -> {
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, CLUSTERS_CLUSTER_HOSTS_INTERNALHOSTNAME, (request, response) -> {
             response.type("text/plain");
             ObjectNode rootNode = JsonNodeFactory.instance.objectNode();
             rootNode.putObject("Hosts").put("public_host_name", request.params("internalhostname")).put("host_status", "HEALTHY");
@@ -193,7 +197,8 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmbariClusterHostComponents(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,CLUSTERS_CLUSTER_HOSTS_HOSTNAME_HOST_COMPONENTS, new AmbariComponentStatusOnHostResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, CLUSTERS_CLUSTER_HOSTS_HOSTNAME_HOST_COMPONENTS,
+                new AmbariComponentStatusOnHostResponse());
     }
 
     private void postAmbariClusterHosts(Service sparkService) {
@@ -201,15 +206,15 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void putAmbariClusterServices(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT,CLUSTERS_CLUSTER_SERVICES, new AmbariClusterRequestsResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT, CLUSTERS_CLUSTER_SERVICES, new AmbariClusterRequestsResponse());
     }
 
     private void getAmbariCluster(String clusterName, Map<String, CloudVmMetaDataStatus> instanceMap, Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,CLUSTERS_CLUSTER, new AmbariClusterResponse(instanceMap, clusterName));
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, CLUSTERS_CLUSTER, new AmbariClusterResponse(instanceMap, clusterName));
     }
 
     private void getAmbariViews(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,VIEWS, new AmbariViewResponse(getDefaultModel().getMockServerAddress()));
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, VIEWS, new AmbariViewResponse(getDefaultModel().getMockServerAddress()));
     }
 
     private void postAmbariVersionDefinitions(Service sparkService) {
@@ -217,12 +222,12 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void putAmbariHdpVersion(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT,STACKS_HDP_VERSIONS_VERSION_OPERATING_SYSTEMS_OS_REPOSITORIES_HDPVERSION,
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT, STACKS_HDP_VERSIONS_VERSION_OPERATING_SYSTEMS_OS_REPOSITORIES_HDPVERSION,
                 new AmbariVersionDefinitionResponse());
     }
 
     private void putAmbariClusterHostComponents(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT,CLUSTERS_CLUSTER_HOST_COMPONENTS, new AmbariClusterRequestsResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.PUT, CLUSTERS_CLUSTER_HOST_COMPONENTS, new AmbariClusterRequestsResponse());
     }
 
     private void deleteClusterHostComponents(Service sparkService) {
@@ -230,7 +235,7 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void deleteAmbariClusterHost(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.DELETE,CLUSTERS_CLUSTER_HOSTS_HOSTNAME, new AmbariClusterRequestsResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.DELETE, CLUSTERS_CLUSTER_HOSTS_HOSTNAME, new AmbariClusterRequestsResponse());
     }
 
     private void postAmbariUsers(Service sparkService) {
@@ -242,7 +247,7 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void postAmbariBlueprints(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.POST,BLUEPRINTS, new EmptyAmbariResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.POST, BLUEPRINTS, new EmptyAmbariResponse());
     }
 
     private void getAmbariBlueprint(Service sparkService) {
@@ -277,7 +282,7 @@ public class AmbariMock extends AbstractModelMock {
     }
 
     private void getAmbariCheck(Service sparkService) {
-        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET,CHECK, new AmbariCheckResponse());
+        dynamicRouteStack.overrideResponseByUrlWithSimple(HttpMethod.GET, CHECK, new AmbariCheckResponse());
     }
 
 }
