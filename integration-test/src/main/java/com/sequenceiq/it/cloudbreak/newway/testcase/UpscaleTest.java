@@ -81,7 +81,7 @@ public class UpscaleTest extends AbstractIntegrationTest {
         }
     }
 
-    @Test
+    @Test(enabled=false)
     public void testStackScaling(TestContext testContext, SparkServer sparkServer) throws Exception {
         // GIVEN
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
@@ -93,6 +93,7 @@ public class UpscaleTest extends AbstractIntegrationTest {
                 .given(StackEntity.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
                 .when(Stack.postV2())
                 .await(STACK_AVAILABLE)
+                .withName("laci")
 //                .when(StackScaleEntity)
                 .when(Stack.postV2());
 
@@ -115,7 +116,7 @@ public class UpscaleTest extends AbstractIntegrationTest {
 //        }
     }
 
-    @Test(dataProvider = "testContext")
+    @Test(enabled=false)
     public void testCreateNewRegularCluster(TestContext testContext, SparkServer sparkServer) {
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
         String clusterName = "mockcluster";

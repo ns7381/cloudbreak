@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -152,8 +151,7 @@ public class TerminationTest extends AbstractIntegrationTest {
                 .await(STACK_DELETED, false);
     }
 
-    @Test(dataProvider = "testContext")
-    @Ignore
+    @Test(enabled=false, dataProvider = "testContext")
     public void testInstanceTermination2(TestContext testContext, SparkServer sparkServer) {
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
         String clusterName = "mockcluster";
