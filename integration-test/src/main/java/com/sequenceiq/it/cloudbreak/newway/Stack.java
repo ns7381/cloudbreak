@@ -236,7 +236,7 @@ public class Stack extends StackEntity {
         });
     }
 
-    public static Stack waitAndCheckClusterAndStackAvailabilityStatus(TestContext testContext, Stack stack, CloudbreakClient cloudbreakClient) throws Exception {
+    public static StackEntity waitAndCheckClusterAndStackAvailabilityStatusV2(TestContext testContext, StackEntity stack, CloudbreakClient cloudbreakClient) throws Exception {
         StackResponse stackResponse = stack.getResponse();
         String stackName = stackResponse.getName();
         Long workspaceId = stackResponse.getWorkspace().getId();
@@ -247,21 +247,13 @@ public class Stack extends StackEntity {
         return stack;
     }
 
-    public static Stack waitAndCheckClusterDeleted(TestContext testContext, Stack stack, CloudbreakClient cloudbreakClient) {
+    public static StackEntity waitAndCheckClusterDeletedV2(TestContext testContext, StackEntity stack, CloudbreakClient cloudbreakClient) {
         StackResponse stackResponse = stack.getResponse();
         String stackName = stackResponse.getName();
         Long workspaceId = stackResponse.getWorkspace().getId();
         Assert.assertNotNull(stackResponse.getName());
         waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "DELETE_COMPLETED");
         return stack;
-    }
-
-    public static void waitAndCheckClusterDeletedA(StackEntity stack, CloudbreakClient cloudbreakClient) {
-        StackResponse stackResponse = stack.getResponse();
-        String stackName = stackResponse.getName();
-        Long workspaceId = stackResponse.getWorkspace().getId();
-        Assert.assertNotNull(stackResponse.getName());
-        waitAndCheckStackStatus(cloudbreakClient.getCloudbreakClient(), workspaceId, stackName, "DELETE_COMPLETED");
     }
 
     public static Assertion<?> checkClusterHasAmbariRunning(String ambariPort, String ambariUser, String ambariPassword) {

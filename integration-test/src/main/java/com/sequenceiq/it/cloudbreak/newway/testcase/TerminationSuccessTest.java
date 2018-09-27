@@ -3,8 +3,6 @@ package com.sequenceiq.it.cloudbreak.newway.testcase;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -17,8 +15,6 @@ import com.sequenceiq.it.cloudbreak.newway.Stack;
 import com.sequenceiq.it.cloudbreak.newway.StackEntity;
 import com.sequenceiq.it.cloudbreak.newway.action.CredentialCreateAction;
 import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateIfNotExistsAction;
-import com.sequenceiq.it.cloudbreak.newway.action.WaitAndCheckClusterAndStackAvailablityAction;
-import com.sequenceiq.it.cloudbreak.newway.action.WaitAndCheckClusterDeletedAction;
 import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.AmbariEntity;
@@ -26,14 +22,10 @@ import com.sequenceiq.it.cloudbreak.newway.entity.ClusterEntity;
 import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
-import com.sequenceiq.it.cloudbreak.newway.wait.WaitUtil;
 
 public class TerminationSuccessTest extends AbstractIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminationSuccessTest.class);
-
-    @Inject
-    private WaitUtil waitUtil;
 
     @BeforeMethod
     public void beforeMethod(Object[] data) {
@@ -70,8 +62,8 @@ public class TerminationSuccessTest extends AbstractIntegrationTest {
                 .given(AmbariEntity.class).withBlueprintName(blueprintName)
                 .given(StackEntity.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
                 .when(Stack.postV2())
-                .then(new WaitAndCheckClusterAndStackAvailablityAction(waitUtil))
+                .then(Stack::waitAndCheckClusterAndStackAvailabilityStatusV2)
                 .when(StackV3Action::deleteV2)
-                .then(WaitAndCheckClusterDeletedAction.create());
+                .then(Stack::waitAndCheckClusterDeletedV2);
     }
 }

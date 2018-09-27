@@ -23,7 +23,6 @@ import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.AmbariEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.ClusterEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.StackScaleEntity;
-import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
 import com.sequenceiq.it.cloudbreak.newway.v3.CredentialV3Action;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackV3Action;
 
@@ -36,52 +35,37 @@ public class UpscaleTest extends AbstractIntegrationTest {
     @BeforeMethod
     public void beforeMethod(Object[] data) {
         TestContext testContext = (TestContext) data[0];
-        SparkServer sparkServer = (SparkServer) data[1];
-        sparkServer.initSparkService();
-        getImgCatalog().configureImgCatalogMock(getTestParameter());
-        DefaultModel model = new DefaultModel();
-        model.startModel(sparkServer.getSparkService(), "localhost");
-
-        modifySparkMock(model);
+        modifySparkMock(testContext);
         testContext.given();
-        testContext.given(ImageCatalog.class).withUrl(getImgCatalog().getImgCatalogUrl())
+        testContext.given(ImageCatalog.class).withUrl(testContext.getImgCatalog().getImgCatalogUrl())
                 .when(new ImageCatalogCreateIfNotExistsAction())
                 .when(ImageCatalog::putSetDefaultByName)
-                .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", sparkServer.getEndpoint()))
+                .given(CredentialEntity.class).withParameters(Map.of("mockEndpoint", testContext.getSparkServer().getEndpoint()))
                 .when(new CredentialCreateAction());
     }
 
-    private void modifySparkMock(DefaultModel model) {
+    private void modifySparkMock(TestContext testContext) {
         Route customResponse2 = (request, response) -> {
             response.status(404);
             return response;
         };
 
-        model.getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        testContext.getModel().getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
-        model.getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        testContext.getModel().getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
-        model.getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        testContext.getModel().getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
     }
 
     @AfterMethod(alwaysRun = true)
     public void tear(Object[] data) {
-        ((SparkServer) data[1]).stop();
         TestContext testContext = (TestContext) data[0];
-        try {
-            testContext.when(CredentialEntity.class, CredentialV3Action::deleteV2);
-        } catch (Exception e) {
-
-        }
-        try {
-            testContext.when(ImageCatalog.class, ImageCatalog::deleteV2);
-        } catch (Exception e) {
-
-        }
+        testContext.when(CredentialEntity.class, CredentialV3Action::deleteV2);
+        testContext.when(ImageCatalog.class, ImageCatalog::deleteV2);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStackScaling(TestContext testContext, SparkServer sparkServer) throws Exception {
         // GIVEN
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
@@ -116,7 +100,7 @@ public class UpscaleTest extends AbstractIntegrationTest {
 //        }
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testCreateNewRegularCluster(TestContext testContext, SparkServer sparkServer) {
         String blueprintName = "Data Science: Apache Spark 2, Apache Zeppelin";
         String clusterName = "mockcluster";

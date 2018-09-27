@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -11,16 +14,21 @@ import org.springframework.util.StringUtils;
 import com.sequenceiq.it.cloudbreak.newway.ApplicationContextProvider;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
+import com.sequenceiq.it.cloudbreak.newway.Prototype;
 import com.sequenceiq.it.cloudbreak.newway.TestParameter;
 import com.sequenceiq.it.cloudbreak.newway.action.ActionV2;
 import com.sequenceiq.it.cloudbreak.newway.assertion.AssertionV2;
+import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.entity.CloudbreakEntity;
 import com.sequenceiq.it.cloudbreak.newway.finder.Attribute;
 import com.sequenceiq.it.cloudbreak.newway.finder.Capture;
 import com.sequenceiq.it.cloudbreak.newway.finder.Finder;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
+import com.sequenceiq.it.cloudbreak.newway.mock.DefaultModel;
+import com.sequenceiq.it.cloudbreak.newway.mock.ImageCatalogMockServerSetup;
 import com.sequenceiq.it.cloudbreak.newway.wait.WaitUtil;
 
+@Prototype
 public class TestContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestContext.class);
@@ -31,8 +39,6 @@ public class TestContext {
 
     private Map<String, String> statuses = new HashMap<>();
 
-    private TestParameter testParameter;
-
     private Map<String, Exception> exceptionMap = new HashMap<>();
 
     private Map<String, Object> selections = new HashMap<>();
@@ -41,11 +47,26 @@ public class TestContext {
 
     private Long workspaceId;
 
+    @Inject
     private WaitUtil waitUtil;
 
-    public TestContext(TestParameter testParameter, WaitUtil waitUtil) {
-        this.testParameter = testParameter;
-        this.waitUtil = waitUtil;
+    @Inject
+    private TestParameter testParameter;
+
+    @Inject
+    private SparkServer sparkServer;
+
+    @Inject
+    private ImageCatalogMockServerSetup imgCatalog;
+
+    private DefaultModel model;
+
+    @PostConstruct
+    private void init() {
+        sparkServer.initSparkService();
+        imgCatalog.configureImgCatalogMock(testParameter);
+        model = new DefaultModel();
+        model.startModel(sparkServer.getSparkService(), "localhost");
     }
 
     public <T extends CloudbreakEntity<T>> T when(T entity, String who, ActionV2<T> action) {
@@ -264,5 +285,17 @@ public class TestContext {
             exceptionMap.put("await " + entity + " for desired statuses" + desiredStatuses, e);
         }
         return entity;
+    }
+
+    public DefaultModel getModel() {
+        return model;
+    }
+
+    public SparkServer getSparkServer() {
+        return sparkServer;
+    }
+
+    public ImageCatalogMockServerSetup getImgCatalog() {
+        return imgCatalog;
     }
 }
