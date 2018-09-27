@@ -4,11 +4,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.sequenceiq.cloudbreak.api.model.stack.StackAuthenticationRequest;
 import com.sequenceiq.cloudbreak.api.model.stack.StackResponse;
+import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceGroupResponse;
+import com.sequenceiq.cloudbreak.api.model.stack.instance.InstanceMetaDataJson;
 import com.sequenceiq.cloudbreak.api.model.v2.ClusterV2Request;
 import com.sequenceiq.cloudbreak.api.model.v2.CustomDomainSettings;
 import com.sequenceiq.cloudbreak.api.model.v2.GeneralSettings;
@@ -24,7 +27,7 @@ import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.NetworkV2Entity;
 import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
 
-public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackResponse, Stack> {
+public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackResponse, StackEntity> {
 
     public static final String STACK = "STACK";
 
@@ -184,5 +187,26 @@ public class StackEntity extends AbstractCloudbreakEntity<StackV2Request, StackR
 
     public boolean hasCluster() {
         return getRequest().getCluster() != null;
+    }
+
+    public List<InstanceGroupResponse> getInstanceGroups() {
+        return getResponse().getInstanceGroups();
+    }
+
+    public String getInstanceId(String hostGroupName) {
+        Set<InstanceMetaDataJson> metadata = getInstanceMetaData(hostGroupName);
+        return metadata
+                .stream()
+                .findFirst()
+                .get()
+                .getInstanceId();
+    }
+
+    public Set<InstanceMetaDataJson> getInstanceMetaData(String hostGroupName) {
+        return getResponse().getInstanceGroups()
+                .stream().filter(im -> im.getGroup().equals(hostGroupName))
+                .findFirst()
+                .get()
+                .getMetadata();
     }
 }

@@ -1,5 +1,8 @@
 package com.sequenceiq.it.cloudbreak.newway;
 
+import static com.sequenceiq.it.cloudbreak.newway.finder.Finders.same;
+
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -9,6 +12,8 @@ import com.sequenceiq.it.cloudbreak.newway.assertion.AssertionV2;
 import com.sequenceiq.it.cloudbreak.newway.cloud.v2.MockCloudProvider;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.CloudbreakEntity;
+import com.sequenceiq.it.cloudbreak.newway.finder.Attribute;
+import com.sequenceiq.it.cloudbreak.newway.finder.Finder;
 
 public abstract class AbstractCloudbreakEntity<R, S, T extends CloudbreakEntity<T>> extends Entity implements CloudbreakEntity<T> {
 
@@ -90,22 +95,102 @@ public abstract class AbstractCloudbreakEntity<R, S, T extends CloudbreakEntity<
     }
 
     public T when(Class<T> entityClass, ActionV2<T> action) {
-        return testContext.when(entityClass, action);
+        return when(entityClass, action, true);
+    }
+
+    public T when(Class<T> entityClass, ActionV2<T> action, boolean skipOnFail) {
+        return testContext.when(entityClass, action, skipOnFail);
     }
 
     public T when(String who, ActionV2<T> action) {
-        return testContext.when((T) this, who, action);
+        return when(who, action, true);
+    }
+
+    public T when(String who, ActionV2<T> action, boolean skipOnFail) {
+        return testContext.when((T) this, who, action, skipOnFail);
     }
 
     public T when(ActionV2<T> action) {
-        return testContext.when((T) this, action);
+        return when(action, true);
+    }
+
+    public T when(ActionV2<T> action, boolean skipOnFail) {
+        return testContext.when((T) this, action, skipOnFail);
     }
 
     public T then(AssertionV2<T> assertion) {
-        return testContext.then((T) this, assertion);
+        return then(assertion, true);
+    }
+
+    public T then(AssertionV2<T> assertion, boolean skipOnFail) {
+        return testContext.then((T) this, assertion, skipOnFail);
     }
 
     public <O extends CloudbreakEntity<O>> O given(Class<O> clss) {
         return testContext.given(clss);
+    }
+
+    public <O> T select(Attribute<T, O> attribute) {
+        return select(null, attribute);
+    }
+
+    public <O> T select(String key, Attribute<T, O> attribute) {
+        return select(key, attribute, same());
+    }
+
+    public <O> T select(String key, Attribute<T, O> attribute, Finder<O> finder) {
+        return select(key, attribute, finder, true);
+    }
+
+    public <O> T select(String key, Attribute<T, O> attribute, Finder<O> finder, boolean skipOnFail) {
+        return testContext.select((T) this, key, attribute, finder, skipOnFail);
+    }
+
+    public <O> T select(Attribute<T, O> attribute, Finder<O> finder) {
+        return select(attribute, finder, true);
+    }
+
+    public <O> T select(Attribute<T, O> attribute, Finder<O> finder, boolean skipOnFail) {
+        return testContext.select((T) this, attribute, finder, skipOnFail);
+    }
+
+    public <O> T capture(String key, Attribute<T, O> attribute) {
+        return capture(key, attribute, true);
+    }
+
+    public <O> T capture(String key, Attribute<T, O> attribute, boolean skipOnFail) {
+        return testContext.capture((T) this, key, attribute, skipOnFail);
+    }
+
+    public <O> T capture(Attribute<T, O> attribute) {
+        return capture(attribute, true);
+    }
+
+    public <O> T capture(Attribute<T, O> attribute, boolean skipOnFail) {
+        return testContext.capture((T) this, null, attribute, skipOnFail);
+    }
+
+    public <O> T verify(String key, Attribute<T, O> attribute) {
+        return verify(key, attribute, true);
+    }
+
+    public <O> T verify(String key, Attribute<T, O> attribute, boolean skipOnFail) {
+        return testContext.verify((T) this, key, attribute, skipOnFail);
+    }
+
+    public <O> T verify(Attribute<T, O> attribute) {
+        return verify(attribute, true);
+    }
+
+    public <O> T verify(Attribute<T, O> attribute, boolean skipOnFail) {
+        return testContext.verify((T) this, null, attribute, skipOnFail);
+    }
+
+    public T await(Map<String, String> statuses) {
+        return testContext.await((T) this, statuses, true);
+    }
+
+    public T await(Map<String, String> statuses, boolean skipOnFail) {
+        return testContext.await((T) this, statuses, skipOnFail);
     }
 }

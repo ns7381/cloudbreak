@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.ImageCatalog;
 import com.sequenceiq.it.cloudbreak.newway.Stack;
+import com.sequenceiq.it.cloudbreak.newway.StackEntity;
 import com.sequenceiq.it.cloudbreak.newway.action.CredentialCreateAction;
 import com.sequenceiq.it.cloudbreak.newway.action.ImageCatalogCreateIfNotExistsAction;
 import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
@@ -89,9 +90,9 @@ public class UpscaleTest extends AbstractIntegrationTest {
                 .given(AmbariEntity.class).withBlueprintName(blueprintName)
                 .given(StackScaleEntity.class).valid()
                 .given(AmbariEntity.class).withBlueprintName(blueprintName)
-                .given(Stack.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
+                .given(StackEntity.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
                 .when(Stack.postV2())
-                .then(Stack::waitAndCheckClusterAndStackAvailabilityStatus)
+                .await(STACK_AVAILABLE)
 //                .when(StackScaleEntity)
                 .when(Stack.postV2());
 
@@ -120,11 +121,11 @@ public class UpscaleTest extends AbstractIntegrationTest {
         String clusterName = "mockcluster";
         testContext.given(ClusterEntity.class).withName(clusterName)
                 .given(AmbariEntity.class).withBlueprintName(blueprintName)
-                .given(Stack.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
+                .given(StackEntity.class).withName(clusterName).withGatewayPort(sparkServer.getPort())
                 .when(Stack.postV2())
-                .then(Stack::waitAndCheckClusterAndStackAvailabilityStatus)
-                .when(Stack.class, StackV3Action::deleteV2)
-                .then(Stack::waitAndCheckClusterDeleted);
+                .await(STACK_AVAILABLE)
+                .when(StackEntity.class, StackV3Action::deleteV2)
+                .await(STACK_DELETED);
     }
 
 }

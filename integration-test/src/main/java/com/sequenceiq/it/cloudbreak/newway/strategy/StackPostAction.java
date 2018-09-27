@@ -23,14 +23,14 @@ import com.sequenceiq.it.cloudbreak.newway.CredentialEntity;
 import com.sequenceiq.it.cloudbreak.newway.DatalakeCluster;
 import com.sequenceiq.it.cloudbreak.newway.ImageSettings;
 import com.sequenceiq.it.cloudbreak.newway.Kerberos;
-import com.sequenceiq.it.cloudbreak.newway.Stack;
+import com.sequenceiq.it.cloudbreak.newway.StackEntity;
 import com.sequenceiq.it.cloudbreak.newway.action.ActionV2;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.AmbariEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.ClusterEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
 
-public class StackPostAction implements ActionV2<Stack> {
+public class StackPostAction implements ActionV2<StackEntity> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StackPostAction.class);
 
@@ -39,7 +39,7 @@ public class StackPostAction implements ActionV2<Stack> {
     private static final String NETWORK_ID_KEY = "networkId";
 
     @Override
-    public Stack action(TestContext testContext, Stack entity, CloudbreakClient client) throws Exception {
+    public StackEntity action(TestContext testContext, StackEntity entity, CloudbreakClient client) throws Exception {
 
         CredentialEntity credential = testContext.get(CredentialEntity.class);
 
