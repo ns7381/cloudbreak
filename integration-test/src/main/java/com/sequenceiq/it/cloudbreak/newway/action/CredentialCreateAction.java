@@ -13,7 +13,7 @@ public class CredentialCreateAction implements ActionV2<CredentialEntity> {
 
     @Override
     public CredentialEntity action(TestContext testContext, CredentialEntity entity, CloudbreakClient client) throws Exception {
-        Log.log(" post "
+        Log.log(LOGGER, " post "
                 .concat(entity.getName())
                 .concat(" private credential. "));
         try {
@@ -22,7 +22,11 @@ public class CredentialCreateAction implements ActionV2<CredentialEntity> {
                             .credentialV3Endpoint()
                             .createInWorkspace(entity.workspaceId(), entity.getRequest()));
         } catch (Exception e) {
-            LOGGER.info("Creation of credential has failed, using existing if it is possible", e);
+            LOGGER.info("Creation of credential has failed, load from the CB");
+            entity.setResponse(
+                    client.getCloudbreakClient()
+                            .credentialV3Endpoint()
+                            .getByNameInWorkspace(entity.workspaceId(), entity.getRequest().getName()));
         }
         return entity;
     }

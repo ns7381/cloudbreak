@@ -77,6 +77,8 @@ public class SparkServer {
         callStack.clear();
         requestResponseMap.clear();
         initialized = true;
+
+        LOGGER.info("SparkServer has been started on https://{}:{}", hostname, port);
     }
 
     public void startImageCatalog() {

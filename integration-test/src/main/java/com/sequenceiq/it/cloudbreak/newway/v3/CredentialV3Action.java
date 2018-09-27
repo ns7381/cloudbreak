@@ -2,6 +2,9 @@ package com.sequenceiq.it.cloudbreak.newway.v3;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sequenceiq.it.IntegrationTestContext;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakClient;
 import com.sequenceiq.it.cloudbreak.newway.CloudbreakTest;
@@ -11,6 +14,9 @@ import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.log.Log;
 
 public class CredentialV3Action {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialV3Action.class);
+
     private CredentialV3Action() {
     }
 
@@ -100,7 +106,7 @@ public class CredentialV3Action {
     }
 
     public static CredentialEntity deleteV2(TestContext testContext, CredentialEntity entity, CloudbreakClient cloudbreakClient) {
-        Log.log("Delete %s credential. ", entity.getName());
+        Log.log(LOGGER, "Delete %s credential. ", entity.getName());
         cloudbreakClient.getCloudbreakClient().credentialV3Endpoint()
                 .deleteInWorkspace(testContext.workspaceId(), entity.getName());
         return entity;

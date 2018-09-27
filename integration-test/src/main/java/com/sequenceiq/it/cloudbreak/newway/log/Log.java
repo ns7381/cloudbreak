@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
 import org.testng.Reporter;
 
 public class Log {
@@ -19,7 +20,15 @@ public class Log {
     }
 
     public static void log(String message, Object... args) {
-        log(String.format(message, args));
+        log(null, message, args);
+    }
+
+    public static void log(Logger logger, String message, Object... args) {
+        String format = String.format(message, args);
+        log(format);
+        if (logger != null) {
+            logger.info(format);
+        }
     }
 
     public static void log(String message) {

@@ -1,5 +1,7 @@
 package com.sequenceiq.it.cloudbreak.newway.testcase;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -20,10 +22,15 @@ import com.sequenceiq.it.cloudbreak.newway.config.SparkServer;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.mock.ImageCatalogMockServerSetup;
 import com.sequenceiq.it.cloudbreak.newway.mock.MockPoolConfiguration;
+import com.sequenceiq.it.cloudbreak.newway.wait.WaitUtil;
 import com.sequenceiq.it.config.IntegrationTestConfiguration;
 
 @ContextConfiguration(classes = {IntegrationTestConfiguration.class, MockPoolConfiguration.class}, initializers = ConfigFileApplicationContextInitializer.class)
 public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContextTests {
+
+    protected static final Map<String, String> STACK_AVAILABLE = Map.of("status", "AVAILABLE", "clusterStatus", "AVAILABLE");
+
+    protected static final Map<String, String> STACK_DELETED = Map.of("status", "DELETE_COMPLETED");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
@@ -38,6 +45,9 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
 
     @Autowired
     private WireMockServer mockServer;
+
+    @Inject
+    protected WaitUtil waitUtil;
 
     @BeforeSuite
     public void beforeSuite(ITestContext testngContext) {
@@ -72,6 +82,6 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
 
     @DataProvider
     public Object[][] testContext() {
-        return new Object[][]{{new TestContext(testParameter), sparkServer}};
+        return new Object[][]{{new TestContext(testParameter, waitUtil), sparkServer}};
     }
 }

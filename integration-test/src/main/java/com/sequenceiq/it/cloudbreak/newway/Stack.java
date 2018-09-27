@@ -37,6 +37,8 @@ import com.sequenceiq.it.cloudbreak.newway.action.ActionV2;
 import com.sequenceiq.it.cloudbreak.newway.context.TestContext;
 import com.sequenceiq.it.cloudbreak.newway.entity.InstanceGroupEntity;
 import com.sequenceiq.it.cloudbreak.newway.entity.StackAuthentication;
+import com.sequenceiq.it.cloudbreak.newway.finder.Attribute;
+import com.sequenceiq.it.cloudbreak.newway.finder.Finder;
 import com.sequenceiq.it.cloudbreak.newway.strategy.StackPostAction;
 import com.sequenceiq.it.cloudbreak.newway.v3.CloudbreakV3Util;
 import com.sequenceiq.it.cloudbreak.newway.v3.StackPostV3Strategy;
@@ -92,8 +94,25 @@ public class Stack extends StackEntity {
         return stack;
     }
 
-    public static ActionV2<Stack> postV2() {
+    public static ActionV2<StackEntity> postV2() {
         return new StackPostAction();
+    }
+
+    public static StackEntity deleteInstance(TestContext testContext, StackEntity entity, CloudbreakClient cloudbreakClient) {
+        String instanceId = testContext.getSelected("instanceId");
+        cloudbreakClient.getCloudbreakClient()
+                .stackV3Endpoint()
+                .deleteInstance(testContext.workspaceId(), entity.getName(), instanceId, true);
+        return entity;
+    }
+
+    public static <O> ActionV2<StackEntity> deleteInstance(String instanceId) {
+        return (testContext, entity, cloudbreakClient) -> {
+            cloudbreakClient.getCloudbreakClient()
+                    .stackV3Endpoint()
+                    .deleteInstance(testContext.workspaceId(), entity.getName(), instanceId, true);
+            return entity;
+        };
     }
 
     public static Action<Stack> post(String key) {
