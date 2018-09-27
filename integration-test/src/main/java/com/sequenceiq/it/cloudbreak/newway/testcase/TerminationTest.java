@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -63,11 +62,11 @@ public class TerminationTest extends AbstractIntegrationTest {
             return response;
         };
 
-        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        model.getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
-        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        model.getAmbariMock().getDynamicRouteStack().get(AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
-        model.getAmbariMock().getDynamicRouteStack().overrideResponseByUrlWithSimple(HttpMethod.GET, AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
+        model.getAmbariMock().getDynamicRouteStack().get( AMBARI_API_ROOT + CLUSTERS_CLUSTER_REQUESTS_REQUEST,
                 customResponse2);
     }
 

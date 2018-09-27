@@ -49,7 +49,7 @@ public class MockPoolConfiguration {
         //get random range of ports
         int randomPort = ThreadLocalRandom.current().nextInt(8400, 8900 + 1);
         File keystoreFile = createTempFileFromClasspath("/keystore_server");
-        WireMockServer server = new WireMockServer(options().httpsPort(randomPort).keystorePath(keystoreFile.getPath()).keystorePassword("secret"));
+        WireMockServer server = new WireMockServer(options().dynamicPort().httpsPort(randomPort).keystorePath(keystoreFile.getPath()).keystorePassword("secret"));
         server.start();
         return server;
     }

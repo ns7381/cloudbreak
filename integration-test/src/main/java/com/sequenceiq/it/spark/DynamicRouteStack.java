@@ -24,52 +24,74 @@ public class DynamicRouteStack {
         this.model = model;
     }
 
-    public Route overrideResponseByUrlWithSimple(HttpMethod method, String url, Route responseHandler) {
+    public Route get(String url, Route responseHandler) {
+        Route route = overrideResponseByUrlWithSimple(HttpMethod.GET, url, responseHandler);
+        service.get(url, route);
+        return route;
+    }
+
+    public Route put(String url, Route responseHandler) {
+        Route route = overrideResponseByUrlWithSimple(HttpMethod.PUT, url, responseHandler);
+        service.put(url, route);
+        return route;
+    }
+
+    public Route post(String url, Route responseHandler) {
+        Route route = overrideResponseByUrlWithSimple(HttpMethod.POST, url, responseHandler);
+        service.post(url, route);
+        return route;
+    }
+
+    public Route delete(String url, Route responseHandler) {
+        Route route = overrideResponseByUrlWithSimple(HttpMethod.DELETE, url, responseHandler);
+        service.delete(url, route);
+        return route;
+    }
+
+    public Route get(String url, StatefulRoute responseHandler) {
+        Route route = overrideResponseByUrlWithStateful(HttpMethod.GET, url, responseHandler);
+        service.get(url, route);
+        return route;
+    }
+
+    public Route put(String url, StatefulRoute responseHandler) {
+        Route route = overrideResponseByUrlWithStateful(HttpMethod.PUT, url, responseHandler);
+        service.put(url, route);
+        return route;
+    }
+
+    public Route post(String url, StatefulRoute responseHandler) {
+        Route route = overrideResponseByUrlWithStateful(HttpMethod.POST, url, responseHandler);
+        service.post(url, route);
+        return route;
+    }
+
+    public Route delete(String url, StatefulRoute responseHandler) {
+        Route route = overrideResponseByUrlWithStateful(HttpMethod.DELETE, url, responseHandler);
+        service.delete(url, route);
+        return route;
+    }
+
+    private Route overrideResponseByUrlWithSimple(HttpMethod method, String url, Route responseHandler) {
         RouteKey key = new RouteKey(method, url);
         if (mockResponders.get(key) == null) {
             CustomizeableDynamicRoute route = new CustomizeableDynamicRoute(responseHandler);
             mockResponders.put(key, route);
-            addToSpark(method, url, route);
         }
         CustomizeableDynamicRoute modifiableRoute = mockResponders.get(key);
         modifiableRoute.setSimpleRouteImplementation(responseHandler);
         return modifiableRoute;
     }
 
-    public Route overrideResponseByUrlWithStateful(HttpMethod method, String url, StatefulRoute responseHandler) {
+    private Route overrideResponseByUrlWithStateful(HttpMethod method, String url, StatefulRoute responseHandler) {
         RouteKey key = new RouteKey(method, url);
         if (mockResponders.get(key) == null) {
             CustomizeableDynamicRoute route = new CustomizeableDynamicRoute(responseHandler, model);
             mockResponders.put(key, route);
-            addToSpark(method, url, route);
         }
         CustomizeableDynamicRoute modifiableRoute = mockResponders.get(key);
         modifiableRoute.setRouteImplementation(responseHandler, model);
         return modifiableRoute;
-    }
-
-    private void addToSpark(HttpMethod method, String url, Route route) {
-        switch (method) {
-            case GET:
-                service.get(url, route);
-                break;
-            case HEAD:
-                service.head(url, route);
-                break;
-            case POST:
-                service.post(url, route);
-                break;
-            case PUT:
-                service.put(url, route);
-                break;
-            case DELETE:
-                service.delete(url, route);
-                break;
-            case OPTIONS:
-                service.options(url, route);
-                break;
-            default: throw new UnsupportedOperationException();
-        }
     }
 
     private class RouteKey {
